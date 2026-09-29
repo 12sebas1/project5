@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oog in oog met de Romeinen</title>
+  <style>
+    :root { --blue: #087bea; --ink: #1d2a35; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; overflow: hidden; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; background: #17232b; }
+    .scene { position: relative; width: 100vw; height: 100vh; min-height: 420px; overflow: hidden; }
+    .image-layer { position: absolute; inset: 0; transition: transform .55s cubic-bezier(.2, .75, .25, 1); transform-origin: var(--focus-x, 50%) var(--focus-y, 50%); }
+    .image-layer.is-zoomed { transform: scale(1.65); }
+    .scene-image { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
+    .back-link, .info-link { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; text-decoration: none; border-radius: 20px; background: rgba(11, 55, 92, .9); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
+    .back-link { top: 14px; left: 14px; padding: 9px 14px; }
+    .info-link { bottom: 13px; left: 14px; padding: 9px 14px; }
+    .zoom-control { position: absolute; top: 57px; left: 14px; z-index: 5; padding: 8px 12px; cursor: pointer; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; border: 0; border-radius: 18px; background: rgba(11, 55, 92, .9); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
+    .zoom-control:hover { background: #07487a; }
+    .back-link:hover, .info-link:hover { background: #07487a; }
+    .title-card { position: absolute; top: 14px; right: 14px; z-index: 2; width: min(270px, calc(100% - 28px)); padding: 13px 15px; border: 1px solid rgba(89, 71, 43, .25); border-radius: 6px; background: rgba(255, 250, 235, .93); box-shadow: 0 3px 9px rgba(0, 0, 0, .22); }
+    .title-card h1 { margin: 0 0 8px; font-size: 20px; line-height: .95; }
+    .title-card p { margin: 0; color: #35434b; font-size: 11px; line-height: 1.25; }
+    .helmet { float: left; margin: -2px 10px 0 0; font-size: 28px; }
+    .hotspot { position: absolute; z-index: 3; width: 31px; height: 31px; padding: 0; cursor: pointer; border: 5px solid white; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(0, 111, 239, .82), 0 2px 8px rgba(0, 0, 0, .3); transition: transform .15s ease; }
+    .hotspot:hover, .hotspot:focus-visible { transform: scale(1.15); outline: none; }
+    .spot-one { top: 45%; left: 15%; }
+    .spot-two { top: 30%; left: 63%; }
+    .spot-three { top: 65%; left: 21%; }
+    .spot-four { top: 64%; left: 51%; }
+    .spot-five { top: 57%; right: 14%; }
+    .spot-six { top: 24%; left: 37%; }
+    .spot-seven { top: 53%; left: 37%; }
+    .spot-eight { top: 34%; left: 53%; }
+    .spot-nine { top: 77%; left: 41%; }
+    .fact-card { position: absolute; z-index: 4; top: 36%; left: 21%; display: none; width: min(355px, calc(100% - 28px)); padding: 13px 44px 13px 14px; border-radius: 8px; background: rgba(255, 255, 255, .96); box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
+    .fact-card.is-open { display: block; }
+    .fact-card h2 { margin: 0 0 5px; font-size: 16px; }
+    .fact-card p { margin: 0; color: #52606a; font-size: 12px; line-height: 1.3; }
+    .fact-card .close { position: absolute; top: 7px; right: 9px; padding: 2px; cursor: pointer; border: 0; background: none; color: #67727a; font-size: 18px; }
+    .activity { margin-top: 12px; padding-top: 10px; border-top: 1px solid #dce2e4; }
+    .activity h3 { margin: 0 0 7px; font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    .choices { display: grid; gap: 6px; }
+    .choice { padding: 7px 9px; cursor: pointer; color: #21435e; text-align: left; font-family: Arial, sans-serif; font-size: 11px; border: 1px solid #b9cedc; border-radius: 5px; background: #edf7fc; }
+    .choice:hover, .choice:focus-visible { border-color: var(--blue); background: #d9effc; outline: none; }
+    .choice.is-correct { color: #145f37; border-color: #50ad79; background: #e3f5e9; }
+    .choice.is-wrong { color: #8c2e25; border-color: #d8877e; background: #fbe8e5; }
+    .activity-result { min-height: 15px; margin: 7px 0 0; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; }
+    .game-modal { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 18px; visibility: hidden; opacity: 0; background: rgba(9, 29, 42, .62); transition: opacity .2s ease, visibility .2s ease; }
+    .game-modal.is-open { visibility: visible; opacity: 1; }
+    .game-dialog { position: relative; width: min(430px, 100%); max-height: calc(100vh - 24px); overflow: auto; padding: 24px; text-align: center; border: 3px solid #d3b87a; border-radius: 12px; background: #fffaf0; box-shadow: 0 12px 35px rgba(0, 0, 0, .35); }
+    .game-dialog h2 { margin: 0 0 5px; font-size: 28px; }
+    .game-dialog > p { margin: 0 auto 15px; color: #53616b; font-size: 14px; line-height: 1.35; }
+    .game-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 auto 10px; }
+    .game-mode { min-width: 0; padding: 7px 6px; cursor: pointer; color: #21435e; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; border: 1px solid #b9cedc; border-radius: 5px; background: #edf7fc; }
+    .game-mode.is-selected, .game-mode:hover, .game-mode:focus-visible { color: white; border-color: #165997; background: #165997; outline: none; }
+    .game-instructions { margin: 0 auto 12px !important; padding: 9px 11px; text-align: left; font-family: Arial, sans-serif; font-size: 11px !important; border-left: 3px solid #d3b87a; background: #f8f0dc; }
+    .modal-close { position: absolute; top: 8px; right: 11px; padding: 2px 7px; cursor: pointer; color: #53616b; font-size: 24px; border: 0; background: transparent; }
+    .mill-board { position: relative; width: min(100%, 310px); aspect-ratio: 1; margin: 4px auto 12px; border: 4px solid #80562e; background: #ead7ae; box-shadow: inset 0 0 0 5px rgba(255, 250, 228, .35), 0 4px 10px rgba(0, 0, 0, .2); }
+    .mill-board::before, .mill-board::after { position: absolute; content: ''; border: 3px solid #80562e; }
+    .mill-board::before { inset: 16.5%; }
+    .mill-board::after { inset: 33%; }
+    .board-line { position: absolute; z-index: 0; background: #80562e; }
+    .board-line.vertical { top: 0; left: calc(50% - 1.5px); width: 3px; height: 16.5%; }
+    .board-line.vertical.bottom { top: auto; bottom: 0; }
+    .board-line.horizontal { top: calc(50% - 1.5px); left: 0; width: 16.5%; height: 3px; }
+    .board-line.horizontal.right { left: auto; right: 0; }
+    .mill-point { position: absolute; z-index: 1; width: 27px; height: 27px; padding: 0; cursor: pointer; transform: translate(-50%, -50%); border: 3px solid #fff7df; border-radius: 50%; background: #c9863c; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); }
+    .mill-point:hover, .mill-point:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+    .mill-point.blue { background: #247bc0; }
+    .mill-point.red { background: #b84c3d; }
+    .mill-point.selected { outline: 3px solid #f4c849; outline-offset: 2px; }
+    .mill-point.last-move { animation: lastMovePulse 1.1s ease 2; }
+    @keyframes lastMovePulse { 0%, 100% { box-shadow: 0 1px 4px rgba(0, 0, 0, .3); } 50% { box-shadow: 0 0 0 7px rgba(244, 200, 73, .85), 0 2px 8px rgba(0, 0, 0, .35); } }
+    .point-0 { top: 0; left: 0; } .point-1 { top: 0; left: 50%; } .point-2 { top: 0; left: 100%; }
+    .point-3 { top: 50%; left: 100%; } .point-4 { top: 100%; left: 100%; } .point-5 { top: 100%; left: 50%; }
+    .point-6 { top: 100%; left: 0; } .point-7 { top: 50%; left: 0; }
+    .point-8 { top: 16.5%; left: 16.5%; } .point-9 { top: 16.5%; left: 50%; } .point-10 { top: 16.5%; left: 83.5%; }
+    .point-11 { top: 50%; left: 83.5%; } .point-12 { top: 83.5%; left: 83.5%; } .point-13 { top: 83.5%; left: 50%; }
+    .point-14 { top: 83.5%; left: 16.5%; } .point-15 { top: 50%; left: 16.5%; }
+    .point-16 { top: 33%; left: 33%; } .point-17 { top: 33%; left: 50%; } .point-18 { top: 33%; left: 67%; }
+    .point-19 { top: 50%; left: 67%; } .point-20 { top: 67%; left: 67%; } .point-21 { top: 67%; left: 50%; }
+    .point-22 { top: 67%; left: 33%; } .point-23 { top: 50%; left: 33%; }
+    .game-status { min-height: 18px; margin: 0 0 8px !important; padding: 7px 9px; color: #35434b !important; font-family: Arial, sans-serif; font-size: 12px !important; font-weight: 700; border-radius: 5px; background: #f2ead8; }
+    .game-status.computer-thinking { color: #165997 !important; background: #e4f2fb; }
+    .game-log { min-height: 30px; margin: 9px auto 0; padding: 7px 9px; color: #52606a; text-align: left; font-family: Arial, sans-serif; font-size: 11px; line-height: 1.35; border: 1px solid #d8c898; border-radius: 5px; background: #fffdf5; }
+    .game-legend { display: flex; justify-content: center; gap: 16px; margin: 0; color: #53616b; font-family: Arial, sans-serif; font-size: 11px; }
+    .legend-blue::before, .legend-red::before { display: inline-block; width: 10px; height: 10px; margin-right: 4px; content: ''; vertical-align: -1px; border-radius: 50%; }
+    .legend-blue::before { background: #247bc0; } .legend-red::before { background: #b84c3d; }
+    .reset-game { margin-top: 10px; padding: 7px 12px; cursor: pointer; color: #21435e; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; border: 1px solid #b9cedc; border-radius: 5px; background: #edf7fc; }
+    .reset-game:hover, .reset-game:focus-visible { border-color: var(--blue); background: #d9effc; outline: none; }
+    .game-result { min-height: 18px; margin: 12px 0 0 !important; font-family: Arial, sans-serif; font-size: 12px !important; font-weight: 700; }
+    @media (max-width: 650px) {
+      body { overflow: auto; }
+      .scene { height: auto; min-height: 100vh; }
+      .scene-image { height: auto; min-height: 100vh; object-fit: cover; }
+      .title-card { top: 62px; right: 12px; width: 215px; }
+      .title-card h1 { font-size: 17px; }
+      .hotspot { width: 26px; height: 26px; border-width: 4px; }
+      .fact-card { top: 39%; left: 14px; }
+      .game-modes { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="scene">
+    <div class="image-layer" id="image-layer">
+      <img class="scene-image" src="Plaat.jpg" alt="Schoolplaat over een Romeinse nederzetting in Nederland">
+
+      <button class="hotspot spot-one" type="button" data-fact="soldaat" data-action="quiz" aria-label="Meer informatie en quiz over de Romeinse soldaat"></button>
+      <button class="hotspot spot-two" type="button" data-fact="fort" aria-label="Meer informatie over het fort"></button>
+      <button class="hotspot spot-three" type="button" data-fact="markt" data-action="game" aria-label="Meer informatie en minigame over de markt"></button>
+      <button class="hotspot spot-four" type="button" data-fact="rivier" aria-label="Meer informatie over de rivier"></button>
+      <button class="hotspot spot-five" type="button" data-fact="brug" aria-label="Meer informatie over de Romeinse brug"></button>
+      <button class="hotspot spot-six" type="button" data-fact="kamp" aria-label="Meer informatie over het Romeinse kamp"></button>
+      <button class="hotspot spot-seven" type="button" data-fact="handel" aria-label="Meer informatie over handel"></button>
+      <button class="hotspot spot-eight" type="button" data-fact="wachttoren" aria-label="Meer informatie over de wachttoren"></button>
+      <button class="hotspot spot-nine" type="button" data-fact="boot" aria-label="Meer informatie over de Romeinse boot"></button>
+    </div>
+    <a class="back-link" href="../index.html">← <span>Terug naar overzicht</span></a>
+    <button class="zoom-control" id="zoom-control" type="button">Zoom resetten</button>
+    <section class="title-card" aria-label="Titel van de schoolplaat">
+      <span class="helmet" aria-hidden="true">🪖</span>
+      <h1>Oog in oog<br>met de Romeinen</h1>
+      <p>Zo leefden de Romeinse soldaten aan de noordgrens van het Romeinse Rijk in Nederland, zo'n 2000 jaar geleden.</p>
+    </section>
+
+    <article class="fact-card is-open" id="fact-card">
+      <button class="close" type="button" aria-label="Sluiten">×</button>
+      <div class="fact-copy">
+        <h2>Romeinse soldaat</h2>
+        <p>De Romeinse soldaten bewaakten de grenzen, trokken door het landschap en woonden in forten zoals dit.</p>
+      </div>
+      <div class="activity" id="activity"></div>
+    </article>
+    <a class="info-link" href="#fact-card">ⓘ <span>Meer weten over de Romeinen?</span></a>
+    <section class="game-modal" id="game-modal" aria-hidden="true">
+      <div class="game-dialog" role="dialog" aria-modal="true" aria-labelledby="game-title">
+        <button class="modal-close" id="modal-close" type="button" aria-label="Molenspel sluiten">×</button>
+        <h2 id="game-title">Het Molenspel</h2>
+        <div class="game-modes" role="group" aria-label="Spelmodus">
+          <button class="game-mode is-selected" type="button" data-mode="computer">Tegen de computer</button>
+          <button class="game-mode" type="button" data-mode="two-player">Twee spelers</button>
+          <button class="game-mode" type="button" data-mode="computer-computer">Computer tegen zichzelf</button>
+        </div>
+        <p class="game-instructions"><strong>Zo speel je:</strong> plaats om de beurt je negen stenen op een punt. Drie eigen stenen op een rij vormen een molen. Dan mag je een steen van de tegenstander wegnemen. Als alle stenen staan, verschuif je telkens een steen naar een aangrenzend leeg punt. Een speler wint zodra de tegenstander minder dan drie stenen heeft of geen zet meer kan doen.</p>
+        <p class="game-status" id="game-status" aria-live="polite"></p>
+        <div class="mill-board" id="mill-board" aria-label="Molenspelbord">
+          <span class="board-line vertical"></span><span class="board-line vertical bottom"></span>
+          <span class="board-line horizontal"></span><span class="board-line horizontal right"></span>
+          <button class="mill-point point-0" data-point="0" type="button" aria-label="Punt 1"></button>
+          <button class="mill-point point-1" data-point="1" type="button" aria-label="Punt 2"></button>
+          <button class="mill-point point-2" data-point="2" type="button" aria-label="Punt 3"></button>
+          <button class="mill-point point-3" data-point="3" type="button" aria-label="Punt 4"></button>
+          <button class="mill-point point-4" data-point="4" type="button" aria-label="Punt 5"></button>
+          <button class="mill-point point-5" data-point="5" type="button" aria-label="Punt 6"></button>
+          <button class="mill-point point-6" data-point="6" type="button" aria-label="Punt 7"></button>
+          <button class="mill-point point-7" data-point="7" type="button" aria-label="Punt 8"></button>
+          <button class="mill-point point-8" data-point="8" type="button" aria-label="Punt 9"></button>
+          <button class="mill-point point-9" data-point="9" type="button" aria-label="Punt 10"></button>
+          <button class="mill-point point-10" data-point="10" type="button" aria-label="Punt 11"></button>
+          <button class="mill-point point-11" data-point="11" type="button" aria-label="Punt 12"></button>
+          <button class="mill-point point-12" data-point="12" type="button" aria-label="Punt 13"></button>
+          <button class="mill-point point-13" data-point="13" type="button" aria-label="Punt 14"></button>
+          <button class="mill-point point-14" data-point="14" type="button" aria-label="Punt 15"></button>
+          <button class="mill-point point-15" data-point="15" type="button" aria-label="Punt 16"></button>
+          <button class="mill-point point-16" data-point="16" type="button" aria-label="Punt 17"></button>
+          <button class="mill-point point-17" data-point="17" type="button" aria-label="Punt 18"></button>
+          <button class="mill-point point-18" data-point="18" type="button" aria-label="Punt 19"></button>
+          <button class="mill-point point-19" data-point="19" type="button" aria-label="Punt 20"></button>
+          <button class="mill-point point-20" data-point="20" type="button" aria-label="Punt 21"></button>
+          <button class="mill-point point-21" data-point="21" type="button" aria-label="Punt 22"></button>
+          <button class="mill-point point-22" data-point="22" type="button" aria-label="Punt 23"></button>
+          <button class="mill-point point-23" data-point="23" type="button" aria-label="Punt 24"></button>
+        </div>
+        <p class="game-legend"><span class="legend-blue">Blauw: jij</span><span class="legend-red">Rood: tegenstander</span></p>
+        <p class="game-result" id="game-result" aria-live="polite"></p>
+        <p class="game-log" id="game-log" aria-live="polite">De uitleg van de zetten verschijnt hier.</p>
+        <button class="reset-game" id="reset-game" type="button">Nieuw spel</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    const facts = {
+      soldaat: ['Romeinse soldaat', 'De Romeinse soldaten bewaakten de grenzen, trokken door het landschap en woonden in forten zoals dit.'],
+      fort: ['Het Romeinse fort', 'Langs de noordgrens van het Romeinse Rijk lagen forten waar soldaten woonden en de rivier bewaakten.'],
+      markt: ['Handel en dagelijks leven', 'In de nederzetting kwamen mensen samen om te handelen, te werken en nieuws uit te wisselen.'],
+      rivier: ['De rivier als grens', 'De rivier vormde een belangrijke grens van het Romeinse Rijk en was ook een route voor handel en vervoer.'],
+      brug: ['De Romeinse brug', 'Bruggen en wegen maakten het mogelijk om snel door het rijk te reizen en goederen te vervoeren.'],
+      kamp: ['Het Romeinse kamp', 'In het kamp trainden soldaten, repareerden ze hun uitrusting en bereidden ze zich voor op hun wacht.'],
+      handel: ['Handel in de nederzetting', 'Kooplieden brachten aardewerk, wijn, graan en metalen voorwerpen mee naar de grens.'],
+      wachttoren: ['De wachttoren', 'Vanaf een hoge toren konden soldaten de omgeving en bewegingen op de rivier goed in de gaten houden.'],
+      boot: ['Vervoer over water', 'De rivier was de snelste route voor mensen, berichten en voorraden langs de noordgrens.']
+    };
+    const card = document.querySelector('#fact-card');
+    const heading = card.querySelector('h2');
+    const text = card.querySelector('p');
+    const activity = document.querySelector('#activity');
+    const imageLayer = document.querySelector('#image-layer');
+    const zoomControl = document.querySelector('#zoom-control');
+    const gameModal = document.querySelector('#game-modal');
+    const gameResult = document.querySelector('#game-result');
+    const gameLog = document.querySelector('#game-log');
+    const gameStatus = document.querySelector('#game-status');
+    const gamePoints = [...document.querySelectorAll('.mill-point')];
+    const millLines = [[0, 1, 2], [2, 3, 4], [4, 5, 6], [6, 7, 0], [8, 9, 10], [10, 11, 12], [12, 13, 14], [14, 15, 8], [16, 17, 18], [18, 19, 20], [20, 21, 22], [22, 23, 16], [1, 9, 17], [3, 11, 19], [5, 13, 21], [7, 15, 23]];
+    const neighbours = {
+      0: [1, 7], 1: [0, 2, 9], 2: [1, 3], 3: [2, 4, 11], 4: [3, 5], 5: [4, 6, 13], 6: [5, 7], 7: [6, 0, 15],
+      8: [9, 15], 9: [8, 10, 1, 17], 10: [9, 11], 11: [10, 12, 3, 19], 12: [11, 13], 13: [12, 14, 5, 21], 14: [13, 15], 15: [14, 8, 7, 23],
+      16: [17, 23], 17: [16, 18, 9], 18: [17, 19], 19: [18, 20, 11], 20: [19, 21], 21: [20, 22, 13], 22: [21, 23], 23: [22, 16, 15]
+    };
+    let millState = [];
+    let currentPlayer = 'blue';
+    let piecesToPlace = { blue: 9, red: 9 };
+    let selectedPoint = null;
+    let removalMode = false;
+    let gameMode = 'computer';
+    let gameOver = false;
+    let computerTimer = null;
+    let lastMove = null;
+    let statusMessage = '';
+    const quiz = {
+      title: 'Korte quiz',
+      question: 'Wat bewaakte deze soldaat?',
+      choices: ['De noordgrens van het Romeinse Rijk', 'Een middeleeuws kasteel', 'Een moderne snelweg'],
+      answer: 0,
+      success: 'Goed gedaan! De Rijn vormde de noordgrens van het rijk.'
+    };
+    const game = {
+      title: 'Mini-game: kies de koopwaar',
+      question: 'Wat kon je op deze markt vinden?',
+      choices: ['Romeins aardewerk', 'Een smartphone', 'Een plastic voetbal'],
+      answer: 0,
+      success: 'Precies! Aardewerk was een belangrijk handelsproduct.'
+    };
+
+    function isComputerPlayer(player) {
+      return gameMode === 'computer-computer' || (gameMode === 'computer' && player === 'red');
+    }
+
+    function showActivity(type) {
+      const content = type === 'quiz' ? quiz : game;
+      activity.innerHTML = `<h3>${content.title}</h3><p>${content.question}</p><div class="choices"></div><p class="activity-result" aria-live="polite"></p>`;
+      const choices = activity.querySelector('.choices');
+      const result = activity.querySelector('.activity-result');
+      content.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.className = 'choice';
+        button.type = 'button';
+        button.textContent = choice;
+        button.addEventListener('click', () => {
+          choices.querySelectorAll('.choice').forEach((item) => item.disabled = true);
+          if (index === content.answer) {
+            button.classList.add('is-correct');
+            result.textContent = content.success;
+          } else {
+            button.classList.add('is-wrong');
+            result.textContent = 'Nog niet. Kijk goed naar de plaat en probeer het opnieuw.';
+          }
+        });
+        choices.append(button);
+      });
+    }
+
+    function zoomToHotspot(spot) {
+      const layerBox = imageLayer.getBoundingClientRect();
+      const spotBox = spot.getBoundingClientRect();
+      imageLayer.style.setProperty('--focus-x', `${spotBox.left - layerBox.left + spotBox.width / 2}px`);
+      imageLayer.style.setProperty('--focus-y', `${spotBox.top - layerBox.top + spotBox.height / 2}px`);
+      imageLayer.classList.add('is-zoomed');
+      zoomControl.textContent = 'Zoom resetten';
+    }
+
+    function openMillGame() {
+      gameModal.classList.add('is-open');
+      gameModal.setAttribute('aria-hidden', 'false');
+      resetMillGame();
+    }
+
+    function resetZoom() {
+      imageLayer.classList.remove('is-zoomed');
+      zoomControl.textContent = 'Zoom resetten';
+    }
+
+    function closeMillGame() {
+      gameModal.classList.remove('is-open');
+      gameModal.setAttribute('aria-hidden', 'true');
+      resetZoom();
+    }
+
+    function resetMillGame() {
+      millState = Array(24).fill(null);
+      currentPlayer = 'blue';
+      piecesToPlace = { blue: 9, red: 9 };
+      selectedPoint = null;
+      removalMode = false;
+      gameOver = false;
+      lastMove = null;
+      statusMessage = '';
+      window.clearTimeout(computerTimer);
+      gameResult.textContent = '';
+      gameLog.textContent = gameMode === 'computer-computer'
+        ? 'De twee computers gaan om de beurt spelen.'
+        : 'Kies een leeg punt om je eerste steen te zetten.';
+      renderMillGame();
+      if (isComputerPlayer(currentPlayer)) {
+        statusMessage = 'computer-thinking';
+        gameLog.textContent = 'Computer blauw zoekt een geldige eerste zet...';
+        renderMillGame();
+        computerTimer = window.setTimeout(computerTurn, 1400);
+      }
+    }
+
+    function renderMillGame() {
+      gamePoints.forEach((point, index) => {
+        point.classList.remove('blue', 'red', 'selected');
+        if (millState[index]) point.classList.add(millState[index]);
+        if (selectedPoint === index) point.classList.add('selected');
+        if (lastMove === index) point.classList.add('last-move');
+        point.setAttribute('aria-label', `Punt ${index + 1}${millState[index] ? `, ${millState[index] === 'blue' ? 'blauwe' : 'rode'} steen` : ', leeg'}${lastMove === index ? ', laatste zet' : ''}`);
+      });
+      gameStatus.classList.toggle('computer-thinking', statusMessage === 'computer-thinking');
+      if (statusMessage && statusMessage !== 'computer-thinking') {
+        gameStatus.textContent = statusMessage;
+      } else if (statusMessage === 'computer-thinking') {
+        gameStatus.textContent = 'De computer denkt na over zijn zet...';
+      } else if (removalMode) {
+        gameStatus.textContent = 'Je hebt een molen gemaakt. Kies een rode steen om weg te nemen.';
+      } else if (piecesToPlace.blue || piecesToPlace.red) {
+        gameStatus.textContent = `${currentPlayer === 'blue' ? 'Blauw' : 'Rood'} is aan de beurt: zet een steen.`;
+      } else if (selectedPoint !== null) {
+        gameStatus.textContent = 'Kies een aangrenzend leeg punt om je steen naartoe te schuiven.';
+      } else {
+        const playerName = gameMode === 'two-player' ? (currentPlayer === 'blue' ? 'Blauw' : 'Rood') : (currentPlayer === 'blue' ? 'Jij' : 'De computer');
+        gameStatus.textContent = `${playerName} is aan de beurt.`;
+      }
+    }
+
+    function makesMill(pointIndex, player) {
+      return millLines.some((line) => line.includes(pointIndex) && line.every((index) => millState[index] === player));
+    }
+
+    function canRemove(pointIndex) {
+      const opponent = currentPlayer === 'blue' ? 'red' : 'blue';
+      const opponentPoints = millState.reduce((points, player, index) => player === opponent ? points.concat(index) : points, []);
+      const freePoints = opponentPoints.filter((index) => !makesMill(index, opponent));
+      return millState[pointIndex] === opponent && (freePoints.length ? freePoints.includes(pointIndex) : opponentPoints.includes(pointIndex));
+    }
+
+    function finishTurn(message = '') {
+      selectedPoint = null;
+      removalMode = false;
+      currentPlayer = currentPlayer === 'blue' ? 'red' : 'blue';
+      statusMessage = message;
+      if (message) gameLog.textContent = message;
+      if (checkGameOver()) return;
+      if (isComputerPlayer(currentPlayer)) {
+        statusMessage = 'computer-thinking';
+        gameLog.textContent = `${currentPlayer === 'blue' ? 'Computer blauw' : 'Computer rood'} zoekt een geldige zet...`;
+        renderMillGame();
+        computerTimer = window.setTimeout(computerTurn, 1400);
+      } else {
+        renderMillGame();
+      }
+    }
+
+    function hasAvailableMove(player) {
+      const pieces = millState.reduce((result, owner, index) => owner === player ? result.concat(index) : result, []);
+      return pieces.some((piece) => neighbours[piece].some((neighbour) => !millState[neighbour]));
+    }
+
+    function checkGameOver() {
+      if (piecesToPlace.blue || piecesToPlace.red) return false;
+      const blueCount = millState.filter((owner) => owner === 'blue').length;
+      const redCount = millState.filter((owner) => owner === 'red').length;
+      if (blueCount < 3 || !hasAvailableMove('blue')) {
+        gameOver = true;
+        gameStatus.textContent = gameMode === 'computer-computer' ? 'Rood wint dit spel.' : 'De computer wint dit spel.';
+      } else if (redCount < 3 || !hasAvailableMove('red')) {
+        gameOver = true;
+        gameStatus.textContent = gameMode === 'computer-computer' ? 'Blauw wint dit spel.' : 'Jij wint dit spel!';
+      }
+      if (gameOver) gameResult.textContent = 'Klik op “Nieuw spel” om nog een keer te spelen.';
+      return gameOver;
+    }
+
+    function computerTurn() {
+      if (!isComputerPlayer(currentPlayer) || gameOver) return;
+      const computerColor = currentPlayer;
+      const opponentColor = computerColor === 'blue' ? 'red' : 'blue';
+      if (piecesToPlace[computerColor]) {
+        const emptyPoints = millState.reduce((result, owner, index) => owner ? result : result.concat(index), []);
+        const point = emptyPoints[Math.floor(Math.random() * emptyPoints.length)];
+        millState[point] = computerColor;
+        piecesToPlace[computerColor] -= 1;
+        lastMove = point;
+        if (makesMill(point, computerColor)) {
+          removeComputerStone(point, computerColor, opponentColor);
+        } else {
+          finishTurn(`${computerColor === 'blue' ? 'Computer blauw' : 'Computer rood'} zette een ${computerColor === 'blue' ? 'blauwe' : 'rode'} steen op punt ${point + 1}. De andere computer is nu aan de beurt.`);
+        }
+        return;
+      }
+
+      const computerPieces = millState.reduce((result, owner, index) => owner === computerColor ? result.concat(index) : result, []);
+      const moves = computerPieces.flatMap((from) => {
+        const destinations = neighbours[from].filter((index) => !millState[index]);
+        return destinations.map((to) => ({ from, to }));
+      });
+      if (!moves.length) {
+        finishTurn();
+        return;
+      }
+      const move = moves.find((candidate) => {
+        millState[candidate.from] = null;
+        millState[candidate.to] = computerColor;
+        const createsMill = makesMill(candidate.to, computerColor);
+        millState[candidate.to] = null;
+        millState[candidate.from] = computerColor;
+        return createsMill;
+      }) || moves[Math.floor(Math.random() * moves.length)];
+      millState[move.from] = null;
+      millState[move.to] = computerColor;
+      lastMove = move.to;
+      if (makesMill(move.to, computerColor)) {
+        removeComputerStone(move.to, computerColor, opponentColor);
+      } else {
+        finishTurn(`${computerColor === 'blue' ? 'Computer blauw' : 'Computer rood'} verplaatste een ${computerColor === 'blue' ? 'blauwe' : 'rode'} steen van punt ${move.from + 1} naar punt ${move.to + 1}.`);
+      }
+    }
+
+    function removeComputerStone(placedPoint, computerColor, opponentColor) {
+      const opponentPoints = millState.reduce((result, owner, index) => owner === opponentColor ? result.concat(index) : result, []);
+      const removable = opponentPoints.filter((index) => !makesMill(index, opponentColor));
+      const point = (removable.length ? removable : opponentPoints)[0];
+      if (point !== undefined) millState[point] = null;
+      finishTurn(`${computerColor === 'blue' ? 'Computer blauw' : 'De computer'} maakte een molen op punt ${placedPoint + 1} en haalde een ${opponentColor === 'blue' ? 'blauwe' : 'rode'} steen weg.`);
+    }
+
+    function handleMillPoint(pointIndex) {
+      if (gameOver || isComputerPlayer(currentPlayer)) return;
+      statusMessage = '';
+      if (removalMode) {
+        if (!canRemove(pointIndex)) {
+          gameResult.textContent = 'Kies een rode steen die niet in een molen zit.';
+          return;
+        }
+        millState[pointIndex] = null;
+        finishTurn();
+        return;
+      }
+
+      if (piecesToPlace.blue || piecesToPlace.red) {
+        if (millState[pointIndex]) return;
+        millState[pointIndex] = currentPlayer;
+        piecesToPlace[currentPlayer] -= 1;
+        if (makesMill(pointIndex, currentPlayer)) {
+          removalMode = true;
+          lastMove = pointIndex;
+          renderMillGame();
+        } else {
+          lastMove = pointIndex;
+          finishTurn();
+        }
+        return;
+      }
+
+      if (selectedPoint === null) {
+        if (millState[pointIndex] === currentPlayer) selectedPoint = pointIndex;
+        renderMillGame();
+        return;
+      }
+
+      if (millState[pointIndex] === currentPlayer) {
+        selectedPoint = pointIndex;
+        renderMillGame();
+        return;
+      }
+      if (millState[pointIndex] || !neighbours[selectedPoint].includes(pointIndex)) return;
+      millState[pointIndex] = currentPlayer;
+      millState[selectedPoint] = null;
+      lastMove = pointIndex;
+      if (makesMill(pointIndex, currentPlayer)) {
+        removalMode = true;
+        renderMillGame();
+      } else {
+        finishTurn();
+      }
+    }
+
+    document.querySelectorAll('.hotspot').forEach((spot) => {
+      spot.addEventListener('click', () => {
+        const fact = facts[spot.dataset.fact];
+        heading.textContent = fact[0];
+        text.textContent = fact[1];
+        activity.innerHTML = '';
+        if (spot.dataset.action === 'game') openMillGame();
+        if (spot.dataset.action === 'quiz') showActivity(spot.dataset.action);
+        zoomToHotspot(spot);
+        card.classList.add('is-open');
+      });
+    });
+    card.querySelector('.close').addEventListener('click', () => {
+      card.classList.remove('is-open');
+      resetZoom();
+    });
+    document.querySelector('#modal-close').addEventListener('click', closeMillGame);
+    gameModal.addEventListener('click', (event) => {
+      if (event.target === gameModal) closeMillGame();
+    });
+    gamePoints.forEach((point) => {
+      point.addEventListener('click', () => handleMillPoint(Number(point.dataset.point)));
+    });
+    document.querySelector('#reset-game').addEventListener('click', resetMillGame);
+    document.querySelectorAll('.game-mode').forEach((modeButton) => {
+      modeButton.addEventListener('click', () => {
+        gameMode = modeButton.dataset.mode;
+        document.querySelectorAll('.game-mode').forEach((button) => button.classList.toggle('is-selected', button === modeButton));
+        resetMillGame();
+      });
+    });
+    zoomControl.addEventListener('click', () => {
+      resetZoom();
+    });
+  </script>
+</body>
+</html>
