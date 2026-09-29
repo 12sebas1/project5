@@ -1,1 +1,258 @@
+<!doctype html>
+<html lang="nl">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Kies een schoolplaat</title>
+	<style>
+		:root {
+			--ink: #1d2a35;
+			--muted: #53616b;
+			--paper: #eee7d8;
+			--card: #fbfaf5;
+			--line: #d7cdbb;
+			--blue: #1169c9;
+			--blue-dark: #0a4f9c;
+			--shadow: 0 3px 10px rgba(50, 46, 36, .16);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-height: 100vh;
+			margin: 0;
+			color: var(--ink);
+			font-family: Georgia, 'Times New Roman', serif;
+			background: #d9d0bf;
+		}
+
+		body::before {
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			content: '';
+			opacity: .34;
+			background-image: radial-gradient(rgba(94, 78, 53, .16) .7px, transparent .7px);
+			background-size: 5px 5px;
+		}
+
+		.page {
+			width: min(100% - 28px, 980px);
+			min-height: 100vh;
+			margin: 0 auto;
+			padding: 20px 24px 30px;
+			background: var(--paper);
+			box-shadow: 0 0 28px rgba(39, 34, 25, .2);
+		}
+
+		header {
+			position: relative;
+			display: grid;
+			justify-items: center;
+			padding: 0 70px 18px;
+			text-align: center;
+		}
+
+		.brand {
+			position: absolute;
+			top: 1px;
+			left: 0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			color: var(--ink);
+			font-size: 15px;
+			font-weight: 700;
+			letter-spacing: .3px;
+			line-height: 1.05;
+			text-align: left;
+			text-transform: uppercase;
+		}
+
+		.brand-mark { color: #9b661f; font-size: 32px; line-height: 1; }
+
+		h1 { margin: 0; font-size: clamp(27px, 4vw, 37px); line-height: 1; }
+
+		.intro { margin: 7px 0 0; color: var(--muted); font-size: 15px; }
+
+		.language {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 7px 13px;
+			color: var(--ink);
+			font-family: Arial, sans-serif;
+			font-size: 12px;
+			border: 1px solid var(--line);
+			border-radius: 18px;
+			background: rgba(255, 255, 255, .54);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+		}
+
+		.language span:first-child { font-size: 14px; }
+
+		.plates {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 16px 18px;
+		}
+
+		.plate {
+			display: block;
+			overflow: hidden;
+			color: inherit;
+			text-decoration: none;
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			background: var(--card);
+			box-shadow: var(--shadow);
+			transition: transform .18s ease, box-shadow .18s ease;
+		}
+
+		.plate:hover { transform: translateY(-3px); box-shadow: 0 7px 15px rgba(50, 46, 36, .22); }
+
+		.plate:focus-visible { outline: 3px solid #5a9de6; outline-offset: 3px; }
+
+		.plate.is-featured { border: 3px solid #1680ed; box-shadow: 0 0 0 2px rgba(22, 128, 237, .18), var(--shadow); }
+
+		.art {
+			position: relative;
+			display: grid;
+			min-height: 155px;
+			place-items: center;
+			overflow: hidden;
+			color: rgba(35, 48, 54, .75);
+			background: #b9c7b6;
+		}
+
+		.art::before {
+			position: absolute;
+			inset: 0;
+			content: '';
+			opacity: .55;
+			background: linear-gradient(155deg, transparent 45%, rgba(255, 255, 255, .45) 46%, transparent 63%);
+		}
+
+		.art::after {
+			position: absolute;
+			right: -16%;
+			bottom: -44%;
+			width: 80%;
+			height: 80%;
+			content: '';
+			border-radius: 50% 50% 0 0;
+			background: rgba(67, 94, 81, .33);
+		}
+
+		.art-label {
+			z-index: 1;
+			padding: 8px 12px;
+			font-family: Arial, sans-serif;
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: 1.3px;
+			border: 1px dashed rgba(35, 48, 54, .55);
+			background: rgba(245, 241, 225, .7);
+		}
+
+		.prehistorie { background: #d6b489; }
+		.middeleeuwen { background: #a9c4a4; }
+		.romeinen { background: #c8ac82; }
+		.oorlog { background: #a7b4b4; }
+		.industrie { background: #8e9ca2; }
+		.vandaag { background: #a2c8cd; }
+
+		.plate-info {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+			min-height: 57px;
+			padding: 10px 13px;
+		}
+
+		.plate-title { font-size: 16px; font-weight: 700; line-height: 1.08; }
+
+		.arrow {
+			display: grid;
+			flex: 0 0 28px;
+			width: 28px;
+			height: 28px;
+			place-items: center;
+			color: #34434a;
+			font-family: Arial, sans-serif;
+			font-size: 22px;
+			border: 1px solid #d9cdbb;
+			border-radius: 50%;
+			background: #f7f1e5;
+		}
+
+		.is-featured .plate-info { padding: 10px 11px; color: white; background: #165997; }
+		.is-featured .arrow { color: white; border-color: rgba(255, 255, 255, .5); background: transparent; }
+
+		@media (max-width: 700px) {
+			.page { width: 100%; padding: 18px 14px 24px; }
+			header { padding: 56px 0 18px; }
+			.brand { top: 0; left: 0; }
+			.language { top: 0; right: 0; }
+			.plates { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+			.art { min-height: 125px; }
+			.plate-title { font-size: 14px; }
+		}
+
+		@media (max-width: 430px) {
+			.plates { grid-template-columns: repeat(2, 1fr); }
+			.art { min-height: 150px; }
+		}
+	</style>
+</head>
+<body>
+	<main class="page">
+		<header>
+			<div class="brand"><span class="brand-mark" aria-hidden="true">♜</span><span>Nederland<br>door de eeuwen</span></div>
+			<div class="language"><span aria-hidden="true">◉</span><span>NL</span></div>
+			<h1>Kies een schoolplaat</h1>
+			<p class="intro">Ontdek belangrijke momenten uit de Nederlandse geschiedenis.</p>
+		</header>
+
+		<section class="plates" aria-label="Schoolplaten">
+			<a class="plate" href="#schoolplaat-1">
+				<div class="art prehistorie"><span class="art-label">PLACEHOLDER 01</span></div>
+				<div class="plate-info"><span class="plate-title">De prehistorie</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-2">
+				<div class="art middeleeuwen"><span class="art-label">PLACEHOLDER 02</span></div>
+				<div class="plate-info"><span class="plate-title">De middeleeuwen</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate is-featured" href="plaat3">
+				<div class="art romeinen"><span class="art-label">AFBEELDING 03</span></div>
+				<div class="plate-info"><span class="plate-title">Oog in oog<br>met de Romeinen</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-4">
+				<div class="art oorlog"><span class="art-label">PLACEHOLDER 04</span></div>
+				<div class="plate-info"><span class="plate-title">De Tweede Wereldoorlog</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-5">
+				<div class="art industrie"><span class="art-label">PLACEHOLDER 05</span></div>
+				<div class="plate-info"><span class="plate-title">De industriële revolutie</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-6">
+				<div class="art vandaag"><span class="art-label">PLACEHOLDER 06</span></div>
+				<div class="plate-info"><span class="plate-title">Nederland vandaag</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-7">
+				<div class="art middeleeuwen"><span class="art-label">PLACEHOLDER 07</span></div>
+				<div class="plate-info"><span class="plate-title">Schoolplaat 7</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-8">
+				<div class="art vandaag"><span class="art-label">PLACEHOLDER 08</span></div>
+				<div class="plate-info"><span class="plate-title">Schoolplaat 8</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+		</section>
+	</main>
+</body>
+</html>
 
