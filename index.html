@@ -3,253 +3,228 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Kies een schoolplaat</title>
+	<title>Veluws Verleden</title>
 	<style>
 		:root {
 			--ink: #1d2a35;
 			--muted: #53616b;
-			--paper: #eee7d8;
+			--paper: #f2ecdf;
 			--card: #fbfaf5;
 			--line: #d7cdbb;
 			--blue: #1169c9;
 			--blue-dark: #0a4f9c;
-			--shadow: 0 3px 10px rgba(50, 46, 36, .16);
+			--shadow: 0 3px 10px rgba(50, 46, 36, .14);
 		}
 
 		* { box-sizing: border-box; }
 
 		body {
 			min-height: 100vh;
+			min-height: 100svh;
 			margin: 0;
 			color: var(--ink);
 			font-family: Georgia, 'Times New Roman', serif;
-			background: #d9d0bf;
+			background: var(--paper);
 		}
 
 		body::before {
 			position: fixed;
 			inset: 0;
-			z-index: -1;
+			z-index: 0;
 			content: '';
-			opacity: .34;
-			background-image: radial-gradient(rgba(94, 78, 53, .16) .7px, transparent .7px);
-			background-size: 5px 5px;
+			pointer-events: none;
+			opacity: .25;
+			background-image: radial-gradient(rgba(94, 78, 53, .12) .65px, transparent .65px);
+			background-size: 6px 6px;
 		}
 
 		.page {
-			width: min(100% - 28px, 980px);
+			position: relative;
+			z-index: 1;
+			width: 100%;
 			min-height: 100vh;
-			margin: 0 auto;
-			padding: 20px 24px 30px;
-			background: var(--paper);
-			box-shadow: 0 0 28px rgba(39, 34, 25, .2);
+			min-height: 100svh;
+			padding: clamp(18px, 3vh, 34px) clamp(16px, 3vw, 48px) clamp(24px, 4vh, 42px);
 		}
 
 		header {
-			position: relative;
 			display: grid;
-			justify-items: center;
-			padding: 0 70px 18px;
+			grid-template-columns: minmax(190px, 1fr) minmax(0, 2fr) minmax(100px, 1fr);
+			align-items: start;
+			gap: 12px;
+			padding: 0 0 clamp(20px, 3vh, 32px);
 			text-align: center;
 		}
 
 		.brand {
-			position: absolute;
-			top: 1px;
-			left: 0;
 			display: flex;
 			align-items: center;
-			gap: 8px;
+			gap: 10px;
+			padding-top: 3px;
 			color: var(--ink);
-			font-size: 15px;
+			font-size: clamp(14px, 1.4vw, 17px);
 			font-weight: 700;
-			letter-spacing: .3px;
 			line-height: 1.05;
 			text-align: left;
 			text-transform: uppercase;
 		}
 
-		.brand-mark { color: #9b661f; font-size: 32px; line-height: 1; }
+		.brand-mark { color: #9b661f; font-size: 36px; line-height: 1; }
 
-		h1 { margin: 0; font-size: clamp(27px, 4vw, 37px); line-height: 1; }
+		.heading-group { grid-column: 2; }
 
-		.intro { margin: 7px 0 0; color: var(--muted); font-size: 15px; }
+		h1 { margin: 0; font-size: clamp(28px, 3vw, 40px); line-height: 1.05; }
+
+		.intro { margin: 7px 0 0; color: var(--muted); font-family: Arial, sans-serif; font-size: clamp(14px, 1.25vw, 17px); line-height: 1.35; }
 
 		.language {
-			position: absolute;
-			top: 0;
-			right: 0;
+			justify-self: end;
 			display: flex;
 			align-items: center;
 			gap: 8px;
-			padding: 7px 13px;
+			min-height: 44px;
+			padding: 8px 15px;
 			color: var(--ink);
 			font-family: Arial, sans-serif;
-			font-size: 12px;
+			font-size: 14px;
 			border: 1px solid var(--line);
-			border-radius: 18px;
+			border-radius: 24px;
 			background: rgba(255, 255, 255, .54);
 			box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
 		}
 
-		.language span:first-child { font-size: 14px; }
+		.language span:first-child { font-size: 17px; }
 
 		.plates {
 			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			gap: 16px 18px;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: clamp(14px, 2vw, 22px);
 		}
 
 		.plate {
-			display: block;
+			display: flex;
+			min-width: 0;
+			flex-direction: column;
 			overflow: hidden;
 			color: inherit;
 			text-decoration: none;
 			border: 1px solid var(--line);
-			border-radius: 10px;
+			border-radius: 11px;
 			background: var(--card);
 			box-shadow: var(--shadow);
-			transition: transform .18s ease, box-shadow .18s ease;
+			transition: box-shadow .18s ease, border-color .18s ease;
 		}
 
-		.plate:hover { transform: translateY(-3px); box-shadow: 0 7px 15px rgba(50, 46, 36, .22); }
+		.plate:hover { box-shadow: 0 7px 15px rgba(50, 46, 36, .22); }
 
 		.plate:focus-visible { outline: 3px solid #5a9de6; outline-offset: 3px; }
-
-		.plate.is-featured { border: 3px solid #1680ed; box-shadow: 0 0 0 2px rgba(22, 128, 237, .18), var(--shadow); }
+		.plate:hover > .plate-info { color: white; background-color: var(--blue-dark); }
+		.plate:focus-visible > .plate-info { color: white; background-color: var(--blue-dark); }
+		.plate:hover .arrow, .plate:focus-visible .arrow { color: white; border-color: rgba(255, 255, 255, .55); background-color: transparent; }
 
 		.art {
-			position: relative;
-			display: grid;
-			min-height: 155px;
-			place-items: center;
 			overflow: hidden;
-			color: rgba(35, 48, 54, .75);
+			aspect-ratio: 1.9 / 1;
 			background: #b9c7b6;
 		}
 
-		.art::before {
-			position: absolute;
-			inset: 0;
-			content: '';
-			opacity: .55;
-			background: linear-gradient(155deg, transparent 45%, rgba(255, 255, 255, .45) 46%, transparent 63%);
-		}
-
-		.art::after {
-			position: absolute;
-			right: -16%;
-			bottom: -44%;
-			width: 80%;
-			height: 80%;
-			content: '';
-			border-radius: 50% 50% 0 0;
-			background: rgba(67, 94, 81, .33);
-		}
-
-		.art-label {
-			z-index: 1;
-			padding: 8px 12px;
-			font-family: Arial, sans-serif;
-			font-size: 11px;
-			font-weight: 700;
-			letter-spacing: 1.3px;
-			border: 1px dashed rgba(35, 48, 54, .55);
-			background: rgba(245, 241, 225, .7);
-		}
-
-		.prehistorie { background: #d6b489; }
-		.middeleeuwen { background: #a9c4a4; }
-		.romeinen { background: #c8ac82; }
-		.oorlog { background: #a7b4b4; }
-		.industrie { background: #8e9ca2; }
-		.vandaag { background: #a2c8cd; }
+		.art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 		.plate-info {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			gap: 10px;
-			min-height: 57px;
-			padding: 10px 13px;
+			flex: 1;
+			min-height: 60px;
+			padding: 10px 15px;
+			transition: color .18s ease, background-color .18s ease;
 		}
 
-		.plate-title { font-size: 16px; font-weight: 700; line-height: 1.08; }
+		.plate-title { font-size: clamp(16px, 1.45vw, 20px); font-weight: 700; line-height: 1.12; }
 
 		.arrow {
 			display: grid;
-			flex: 0 0 28px;
-			width: 28px;
-			height: 28px;
+			flex: 0 0 42px;
+			width: 42px;
+			height: 42px;
 			place-items: center;
 			color: #34434a;
 			font-family: Arial, sans-serif;
-			font-size: 22px;
+			font-size: 30px;
 			border: 1px solid #d9cdbb;
 			border-radius: 50%;
 			background: #f7f1e5;
 		}
 
-		.is-featured .plate-info { padding: 10px 11px; color: white; background: #165997; }
-		.is-featured .arrow { color: white; border-color: rgba(255, 255, 255, .5); background: transparent; }
-
-		@media (max-width: 700px) {
-			.page { width: 100%; padding: 18px 14px 24px; }
-			header { padding: 56px 0 18px; }
-			.brand { top: 0; left: 0; }
-			.language { top: 0; right: 0; }
-			.plates { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-			.art { min-height: 125px; }
-			.plate-title { font-size: 14px; }
+		@media (max-width: 850px) {
+			.page { padding: 22px clamp(16px, 3vw, 28px) 30px; }
+			header { grid-template-columns: minmax(150px, 1fr) minmax(0, 2fr) minmax(75px, 1fr); }
+			.plates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.plate-title { font-size: clamp(16px, 2vw, 20px); }
 		}
 
-		@media (max-width: 430px) {
-			.plates { grid-template-columns: repeat(2, 1fr); }
-			.art { min-height: 150px; }
+		@media (max-width: 600px) {
+			.page { padding: 16px 14px 24px; }
+			header { grid-template-columns: 1fr auto; gap: 16px 8px; padding-bottom: 20px; }
+			.brand { grid-column: 1; grid-row: 1; }
+			.brand-mark { font-size: 30px; }
+			.language { grid-column: 2; grid-row: 1; min-height: 42px; padding: 7px 12px; }
+			.heading-group { grid-column: 1 / -1; grid-row: 2; }
+			h1 { font-size: clamp(26px, 7vw, 34px); }
+			.plates { grid-template-columns: 1fr; gap: 14px; }
+			.art { aspect-ratio: 1.85 / 1; }
+			.plate-title { font-size: 19px; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 		}
 	</style>
 </head>
 <body>
 	<main class="page">
 		<header>
-			<div class="brand"><span class="brand-mark" aria-hidden="true">♜</span><span>Nederland<br>door de eeuwen</span></div>
-			<div class="language"><span aria-hidden="true">◉</span><span>NL</span></div>
-			<h1>Kies een schoolplaat</h1>
-			<p class="intro">Ontdek belangrijke momenten uit de Nederlandse geschiedenis.</p>
+			<div class="brand"><span class="brand-mark" aria-hidden="true">♛</span><span>Veluws<br>Verleden</span></div>
+			<div class="heading-group">
+				<h1>Kies een schoolplaat</h1>
+				<p class="intro">Ontdek belangrijke momenten uit de Nederlandse geschiedenis.</p>
+			</div>
+			<div class="language"><span aria-hidden="true">🌐</span><span>NL</span></div>
 		</header>
 
 		<section class="plates" aria-label="Schoolplaten">
-			<a class="plate" href="#schoolplaat-1">
-				<div class="art prehistorie"><span class="art-label">PLACEHOLDER 01</span></div>
-				<div class="plate-info"><span class="plate-title">De prehistorie</span><span class="arrow" aria-hidden="true">›</span></div>
-			</a>
-			<a class="plate" href="#schoolplaat-2">
-				<div class="art middeleeuwen"><span class="art-label">PLACEHOLDER 02</span></div>
-				<div class="plate-info"><span class="plate-title">De middeleeuwen</span><span class="arrow" aria-hidden="true">›</span></div>
-			</a>
-			<a class="plate is-featured" href="plaat3">
-				<div class="art romeinen"><span class="art-label">AFBEELDING 03</span></div>
+			<a class="plate" href="plaat3/index.html">
+				<div class="art"><img src="plaat1.jpg" alt="Een Romeinse nederzetting met soldaten en gebouwen langs de rivier."></div>
 				<div class="plate-info"><span class="plate-title">Oog in oog<br>met de Romeinen</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
+			<a class="plate" href="#schoolplaat-2">
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Verovering_van_Rhenen.jpg" alt="Een historische voorstelling van een middeleeuwse strijd bij Rhenen."></div>
+				<div class="plate-info"><span class="plate-title">De middeleeuwen</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
+			<a class="plate" href="#schoolplaat-3">
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Stonehenge2007_07_30.jpg" alt="Stonehenge, een prehistorisch monument."></div>
+				<div class="plate-info"><span class="plate-title">De prehistorie</span><span class="arrow" aria-hidden="true">›</span></div>
+			</a>
 			<a class="plate" href="#schoolplaat-4">
-				<div class="art oorlog"><span class="art-label">PLACEHOLDER 04</span></div>
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Rotterdam,_Laurenskerk,_na_bombardement_van_mei_1940.jpg" alt="De verwoeste Laurenskerk in Rotterdam na het bombardement van 1940."></div>
 				<div class="plate-info"><span class="plate-title">De Tweede Wereldoorlog</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 			<a class="plate" href="#schoolplaat-5">
-				<div class="art industrie"><span class="art-label">PLACEHOLDER 05</span></div>
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Spinning_jenny.jpg" alt="Een vroege spinmachine uit de industriële revolutie."></div>
 				<div class="plate-info"><span class="plate-title">De industriële revolutie</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 			<a class="plate" href="#schoolplaat-6">
-				<div class="art vandaag"><span class="art-label">PLACEHOLDER 06</span></div>
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Kinderdijk11.JPG" alt="De molens van Kinderdijk in het Nederlandse landschap."></div>
 				<div class="plate-info"><span class="plate-title">Nederland vandaag</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 			<a class="plate" href="#schoolplaat-7">
-				<div class="art middeleeuwen"><span class="art-label">PLACEHOLDER 07</span></div>
-				<div class="plate-info"><span class="plate-title">Schoolplaat 7</span><span class="arrow" aria-hidden="true">›</span></div>
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Nightwatch_by_Rembrandt.jpg" alt="De Nachtwacht van Rembrandt, geschilderd in de zeventiende eeuw."></div>
+				<div class="plate-info"><span class="plate-title">De Gouden Eeuw</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 			<a class="plate" href="#schoolplaat-8">
-				<div class="art vandaag"><span class="art-label">PLACEHOLDER 08</span></div>
-				<div class="plate-info"><span class="plate-title">Schoolplaat 8</span><span class="arrow" aria-hidden="true">›</span></div>
+				<div class="art"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Watersnoodramp_1953.jpg" alt="Beeld van de watersnoodramp in Zeeland in 1953."></div>
+				<div class="plate-info"><span class="plate-title">De watersnoodramp</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 		</section>
 	</main>
