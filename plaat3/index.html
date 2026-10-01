@@ -24,15 +24,16 @@
     .helmet { float: left; margin: -2px 10px 0 0; font-size: 28px; }
     .hotspot { position: absolute; z-index: 3; width: 31px; height: 31px; padding: 0; cursor: pointer; border: 5px solid white; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(0, 111, 239, .82), 0 2px 8px rgba(0, 0, 0, .3); transition: transform .15s ease; }
     .hotspot:hover, .hotspot:focus-visible { transform: scale(1.15); outline: none; }
-    .spot-one { top: 45%; left: 15%; }
-    .spot-two { top: 30%; left: 63%; }
-    .spot-three { top: 65%; left: 21%; }
-    .spot-four { top: 64%; left: 51%; }
-    .spot-five { top: 57%; right: 14%; }
-    .spot-six { top: 24%; left: 37%; }
-    .spot-seven { top: 53%; left: 37%; }
-    .spot-eight { top: 34%; left: 53%; }
-    .spot-nine { top: 77%; left: 41%; }
+    .spot-one { top: 40%; left: 22%; }
+    .spot-two { top: 52%; left: 76%; }
+    .spot-three { top: 42%; left: 32%; }
+    .spot-four { top: 33%; left: 84%; }
+    .spot-five { top: 47%; left: 91%; }
+    .spot-six { top: 40%; left: 50%; }
+    .spot-seven { top: 70%; left: 35%; }
+    .spot-eight { top: 43%; left: 56%; }
+    .spot-nine { top: 86%; left: 27%; }
+    .spot-ten { top: 25%; left: 30%; }
     .fact-card { position: absolute; z-index: 4; top: 36%; left: 21%; display: none; width: min(355px, calc(100% - 28px)); padding: 13px 44px 13px 14px; border-radius: 8px; background: rgba(255, 255, 255, .96); box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
     .fact-card.is-open { display: block; }
     .fact-card h2 { margin: 0 0 5px; font-size: 16px; }
@@ -62,15 +63,16 @@
     <div class="image-layer" id="image-layer">
       <img class="scene-image" src="Plaat.jpg" alt="Schoolplaat over een Romeinse nederzetting in Nederland">
 
-      <button class="hotspot spot-one" type="button" data-fact="soldaat" data-action="quiz" aria-label="Meer informatie en quiz over de Romeinse soldaat"></button>
-      <button class="hotspot spot-two" type="button" data-fact="fort" aria-label="Meer informatie over het fort"></button>
-      <button class="hotspot spot-three" type="button" data-fact="markt" data-action="game" aria-label="Meer informatie en minigame over de markt"></button>
-      <button class="hotspot spot-four" type="button" data-fact="rivier" aria-label="Meer informatie over de rivier"></button>
-      <button class="hotspot spot-five" type="button" data-fact="brug" aria-label="Meer informatie over de Romeinse brug"></button>
-      <button class="hotspot spot-six" type="button" data-fact="kamp" aria-label="Meer informatie over het Romeinse kamp"></button>
-      <button class="hotspot spot-seven" type="button" data-fact="handel" aria-label="Meer informatie over handel"></button>
-      <button class="hotspot spot-eight" type="button" data-fact="wachttoren" aria-label="Meer informatie over de wachttoren"></button>
-      <button class="hotspot spot-nine" type="button" data-fact="boot" aria-label="Meer informatie over de Romeinse boot"></button>
+      <button class="hotspot spot-one" type="button" data-fact="kampen" aria-label="Meer informatie over Romeinse legerkampen op de Veluwe"></button>
+      <button class="hotspot spot-two" type="button" data-fact="verdediging" aria-label="Meer informatie over de verdediging van het legerkamp"></button>
+      <button class="hotspot spot-three" type="button" data-fact="inrichting" aria-label="Meer informatie over de inrichting van het legerkamp"></button>
+      <button class="hotspot spot-four" type="button" data-fact="uitrusting" aria-label="Meer informatie over kleding en uitrusting van de Romeinen"></button>
+      <button class="hotspot spot-five" type="button" data-fact="leger" data-action="quiz" aria-label="Meer informatie en quiz over de samenstelling van het Romeinse leger"></button>
+      <button class="hotspot spot-six" type="button" data-fact="lokaal" aria-label="Meer informatie over de lokale bevolking, kleding en woningen"></button>
+      <button class="hotspot spot-seven" type="button" data-fact="vondsten" aria-label="Meer informatie over de meloenkraal en andere vondsten"></button>
+      <button class="hotspot spot-eight" type="button" data-fact="contact" aria-label="Meer informatie over het contact tussen Romeinen en de lokale bevolking"></button>
+      <button class="hotspot spot-nine" type="button" data-fact="molenspel" data-action="game" aria-label="Meer informatie en minigame over het molenspel"></button>
+      <button class="hotspot spot-ten" type="button" data-fact="landschap" aria-label="Meer informatie over het landschap en de dieren"></button>
     </div>
     <a class="back-link" href="../index.html">← <span>Terug naar overzicht</span></a>
     <button class="zoom-control" id="zoom-control" type="button">Zoom resetten</button>
@@ -80,11 +82,11 @@
       <p>Zo leefden de Romeinse soldaten aan de noordgrens van het Romeinse Rijk in Nederland, zo'n 2000 jaar geleden.</p>
     </section>
 
-    <article class="fact-card is-open" id="fact-card">
+    <article class="fact-card" id="fact-card">
       <button class="close" type="button" aria-label="Sluiten">×</button>
       <div class="fact-copy">
-        <h2>Romeinse soldaat</h2>
-        <p>De Romeinse soldaten bewaakten de grenzen, trokken door het landschap en woonden in forten zoals dit.</p>
+        <h2>Romeinse legerkampen op de Veluwe</h2>
+        <p>Op de Veluwe zijn sporen van Romeinse marskampen gevonden. Die tijdelijke kampen werden gebruikt wanneer het leger onderweg was.</p>
       </div>
       <div class="activity" id="activity"></div>
     </article>
@@ -92,15 +94,16 @@
   </main>
   <script>
     const facts = {
-      soldaat: ['Romeinse soldaat', 'De Romeinse soldaten bewaakten de grenzen, trokken door het landschap en woonden in forten zoals dit.'],
-      fort: ['Het Romeinse fort', 'Langs de noordgrens van het Romeinse Rijk lagen forten waar soldaten woonden en de rivier bewaakten.'],
-      markt: ['Handel en dagelijks leven', 'In de nederzetting kwamen mensen samen om te handelen, te werken en nieuws uit te wisselen.'],
-      rivier: ['De rivier als grens', 'De rivier vormde een belangrijke grens van het Romeinse Rijk en was ook een route voor handel en vervoer.'],
-      brug: ['De Romeinse brug', 'Bruggen en wegen maakten het mogelijk om snel door het rijk te reizen en goederen te vervoeren.'],
-      kamp: ['Het Romeinse kamp', 'In het kamp trainden soldaten, repareerden ze hun uitrusting en bereidden ze zich voor op hun wacht.'],
-      handel: ['Handel in de nederzetting', 'Kooplieden brachten aardewerk, wijn, graan en metalen voorwerpen mee naar de grens.'],
-      wachttoren: ['De wachttoren', 'Vanaf een hoge toren konden soldaten de omgeving en bewegingen op de rivier goed in de gaten houden.'],
-      boot: ['Vervoer over water', 'De rivier was de snelste route voor mensen, berichten en voorraden langs de noordgrens.']
+      kampen: ['Romeinse legerkampen op de Veluwe', 'Op de Veluwe zijn sporen van Romeinse marskampen gevonden. Die tijdelijke kampen werden gebruikt wanneer het leger onderweg was.'],
+      verdediging: ['De verdediging van het legerkamp', 'Een aarden wal en houten palissade konden een kamp beschermen. Vanaf de rand hielden wachters de omgeving in de gaten.'],
+      inrichting: ['De inrichting van het legerkamp', 'Romeinse kampen werden volgens een vaste indeling aangelegd, met wegen, poorten en aparte plekken voor soldaten en voorraden.'],
+      uitrusting: ['Kleding en uitrusting van de Romeinen', 'Soldaten droegen onder meer een tunica, riem, helm en schild. Hun uitrusting hing af van hun taak en rang.'],
+      leger: ['De samenstelling van het Romeinse leger', 'Het leger bestond uit legioenen en hulptroepen. Soldaten hadden verschillende taken en kwamen uit allerlei delen van het Romeinse Rijk.'],
+      lokaal: ['De lokale bevolking: kleding en wonen', 'Mensen in de streek woonden vaak op boerderijen of in kleine nederzettingen. Kleding en dagelijkse spullen verschilden per persoon en periode.'],
+      vondsten: ['De meloenkraal en andere vondsten', 'Kralen, aardewerk en andere kleine vondsten vertellen archeologen over het dagelijks leven en contacten in de streek.'],
+      contact: ['Contact tussen Romeinen en de lokale bevolking', 'Romeinen en lokale bewoners kwamen met elkaar in contact door handel, werk en uitwisseling van gewoonten. Er konden ook spanningen zijn.'],
+      molenspel: ['Het molenspel', 'Bij het molenspel probeerden spelers met hun stenen drie op een rij te krijgen: een molen. Het spelbord is hier in de grond afgebeeld.'],
+      landschap: ['Het landschap en de dieren', 'Het landschap, de planten en dieren boden voedsel en materiaal en bepaalden hoe mensen zich door de streek konden verplaatsen.']
     };
     const card = document.querySelector('#fact-card');
     const heading = card.querySelector('h2');
@@ -110,17 +113,17 @@
     const zoomControl = document.querySelector('#zoom-control');
     const quiz = {
       title: 'Korte quiz',
-      question: 'Wat bewaakte deze soldaat?',
-      choices: ['De noordgrens van het Romeinse Rijk', 'Een middeleeuws kasteel', 'Een moderne snelweg'],
+      question: 'Uit welke onderdelen bestond het Romeinse leger?',
+      choices: ['Legioenen en hulptroepen', 'Alleen ruiters', 'Alleen lokale boeren'],
       answer: 0,
-      success: 'Goed gedaan! De Rijn vormde de noordgrens van het rijk.'
+      success: 'Goed gedaan! Het leger bestond uit legioenen en hulptroepen.'
     };
     const game = {
-      title: 'Mini-game: kies de koopwaar',
-      question: 'Wat kon je op deze markt vinden?',
-      choices: ['Romeins aardewerk', 'Een smartphone', 'Een plastic voetbal'],
+      title: 'Mini-game: het molenspel',
+      question: 'Wat probeer je met drie stenen op een rij te maken?',
+      choices: ['Een molen', 'Een fort', 'Een rivier'],
       answer: 0,
-      success: 'Precies! Aardewerk was een belangrijk handelsproduct.'
+      success: 'Precies! Drie stenen op een rij vormen een molen.'
     };
 
     function showActivity(type) {
@@ -168,6 +171,7 @@
       });
     });
     card.querySelector('.close').addEventListener('click', () => card.classList.remove('is-open'));
+    document.querySelector('.info-link').addEventListener('click', () => card.classList.add('is-open'));
     zoomControl.addEventListener('click', () => {
       imageLayer.classList.remove('is-zoomed');
       zoomControl.textContent = 'Zoom resetten';
