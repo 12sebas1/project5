@@ -8,21 +8,51 @@
     :root { --blue: #087bea; --ink: #1d2a35; }
     * { box-sizing: border-box; }
     body { min-height: 100vh; margin: 0; overflow: hidden; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; background: #17232b; }
-    .scene { position: relative; width: 100vw; height: 100vh; min-height: 420px; overflow: hidden; }
-    .image-layer { position: absolute; inset: 0; transition: transform .55s cubic-bezier(.2, .75, .25, 1); transform-origin: var(--focus-x, 50%) var(--focus-y, 50%); }
-    .image-layer.is-zoomed { transform: scale(1.65); }
-    .scene-image { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
+    .scene { position: relative; width: 100vw; height: 100vh; min-height: 420px; overflow: hidden; contain: layout paint; }
+    .image-layer {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+      transform: translate(0, 0) scale(1);
+      transition: transform .18s ease-out;
+      transform-origin: 0 0;
+      backface-visibility: hidden;
+      touch-action: none;
+      user-select: none;
+    }
+    .image-layer.is-zoomed { }
+    .scene-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      transform: translateZ(0);
+      image-rendering: auto;
+      content-visibility: auto;
+      pointer-events: none;
+    }
     .back-link, .info-link { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; text-decoration: none; border-radius: 20px; background: rgba(11, 55, 92, .9); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
     .back-link { top: 14px; left: 14px; padding: 9px 14px; }
     .info-link { bottom: 13px; left: 14px; padding: 9px 14px; }
-    .zoom-control { position: absolute; top: 57px; left: 14px; z-index: 5; padding: 8px 12px; cursor: pointer; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; border: 0; border-radius: 18px; background: rgba(11, 55, 92, .9); box-shadow: 0 2px 6px rgba(0, 0, 0, .25); }
-    .zoom-control:hover { background: #07487a; }
     .back-link:hover, .info-link:hover { background: #07487a; }
     .title-card { position: absolute; top: 14px; right: 14px; z-index: 2; width: min(270px, calc(100% - 28px)); padding: 13px 15px; border: 1px solid rgba(89, 71, 43, .25); border-radius: 6px; background: rgba(255, 250, 235, .93); box-shadow: 0 3px 9px rgba(0, 0, 0, .22); }
     .title-card h1 { margin: 0 0 8px; font-size: 20px; line-height: .95; }
     .title-card p { margin: 0; color: #35434b; font-size: 11px; line-height: 1.25; }
     .helmet { float: left; margin: -2px 10px 0 0; font-size: 28px; }
-    .hotspot { position: absolute; z-index: 3; width: 31px; height: 31px; padding: 0; cursor: pointer; border: 5px solid white; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(0, 111, 239, .82), 0 2px 8px rgba(0, 0, 0, .3); transition: transform .15s ease; }
+    .hotspot {
+      position: absolute;
+      z-index: 3;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      cursor: pointer;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 0 3px rgba(0, 111, 239, .82), 0 2px 8px rgba(0, 0, 0, .3);
+      transition: transform .15s ease;
+    }
     .hotspot:hover, .hotspot:focus-visible { transform: scale(1.15); outline: none; }
     .spot-one { top: 45%; left: 15%; }
     .spot-two { top: 30%; left: 63%; }
@@ -105,7 +135,14 @@
 <body>
   <main class="scene">
     <div class="image-layer" id="image-layer">
-      <img class="scene-image" src="Plaat.jpg" alt="Schoolplaat over een Romeinse nederzetting in Nederland">
+      <img
+        class="scene-image"
+        src="Plaat.jpg"
+        alt="Schoolplaat over een Romeinse nederzetting in Nederland"
+        decoding="async"
+        fetchpriority="high"
+        sizes="100vw"
+      >
 
       <button class="hotspot spot-one" type="button" data-fact="soldaat" data-action="quiz" aria-label="Meer informatie en quiz over de Romeinse soldaat"></button>
       <button class="hotspot spot-two" type="button" data-fact="fort" aria-label="Meer informatie over het fort"></button>
@@ -118,12 +155,7 @@
       <button class="hotspot spot-nine" type="button" data-fact="boot" aria-label="Meer informatie over de Romeinse boot"></button>
     </div>
     <a class="back-link" href="../index.html">← <span>Terug naar overzicht</span></a>
-    <button class="zoom-control" id="zoom-control" type="button">Zoom resetten</button>
-    <section class="title-card" aria-label="Titel van de schoolplaat">
-      <span class="helmet" aria-hidden="true">🪖</span>
-      <h1>Oog in oog<br>met de Romeinen</h1>
-      <p>Zo leefden de Romeinse soldaten aan de noordgrens van het Romeinse Rijk in Nederland, zo'n 2000 jaar geleden.</p>
-    </section>
+    <a class="info-link" href="#fact-card">ⓘ <span>Meer weten over de Romeinen?</span></a>
 
     <article class="fact-card is-open" id="fact-card">
       <button class="close" type="button" aria-label="Sluiten">×</button>
@@ -133,7 +165,7 @@
       </div>
       <div class="activity" id="activity"></div>
     </article>
-    <a class="info-link" href="#fact-card">ⓘ <span>Meer weten over de Romeinen?</span></a>
+
     <section class="game-modal" id="game-modal" aria-hidden="true">
       <div class="game-dialog" role="dialog" aria-modal="true" aria-labelledby="game-title">
         <button class="modal-close" id="modal-close" type="button" aria-label="Molenspel sluiten">×</button>
@@ -196,8 +228,8 @@
     const heading = card.querySelector('h2');
     const text = card.querySelector('p');
     const activity = document.querySelector('#activity');
+    const scene = document.querySelector('.scene');
     const imageLayer = document.querySelector('#image-layer');
-    const zoomControl = document.querySelector('#zoom-control');
     const gameModal = document.querySelector('#game-modal');
     const gameResult = document.querySelector('#game-result');
     const gameLog = document.querySelector('#game-log');
@@ -219,6 +251,12 @@
     let computerTimer = null;
     let lastMove = null;
     let statusMessage = '';
+    let imageScale = 1;
+    let imageOffsetX = 0;
+    let imageOffsetY = 0;
+    let pinchStartDistance = null;
+    let pinchStartScale = 1;
+    let dragState = null;
     const quiz = {
       title: 'Korte quiz',
       question: 'Wat bewaakte deze soldaat?',
@@ -262,24 +300,51 @@
       });
     }
 
+    function applyZoom(newScale, focusX, focusY) {
+      const clampMin = 1;
+      const clampMax = 15;
+      const previousScale = imageScale || 1;
+      const nextScale = Math.min(clampMax, Math.max(clampMin, newScale));
+
+      const sceneRect = scene.getBoundingClientRect();
+      const pointerX = focusX - sceneRect.left;
+      const pointerY = focusY - sceneRect.top;
+      const worldX = (pointerX - imageOffsetX) / previousScale;
+      const worldY = (pointerY - imageOffsetY) / previousScale;
+
+      imageScale = nextScale;
+      imageOffsetX = pointerX - worldX * imageScale;
+      imageOffsetY = pointerY - worldY * imageScale;
+
+      const maxX = (imageScale - 1) * scene.clientWidth;
+      const maxY = (imageScale - 1) * scene.clientHeight;
+      imageOffsetX = Math.min(0, Math.max(-maxX, imageOffsetX));
+      imageOffsetY = Math.min(0, Math.max(-maxY, imageOffsetY));
+
+      imageLayer.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageScale})`;
+      imageLayer.classList.toggle('is-zoomed', imageScale > 1);
+    }
+
     function zoomToHotspot(spot) {
-      const layerBox = imageLayer.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
       const spotBox = spot.getBoundingClientRect();
-      imageLayer.style.setProperty('--focus-x', `${spotBox.left - layerBox.left + spotBox.width / 2}px`);
-      imageLayer.style.setProperty('--focus-y', `${spotBox.top - layerBox.top + spotBox.height / 2}px`);
-      imageLayer.classList.add('is-zoomed');
-      zoomControl.textContent = 'Zoom resetten';
+      const focusX = spotBox.left - sceneRect.left + spotBox.width / 2;
+      const focusY = spotBox.top - sceneRect.top + spotBox.height / 2;
+      applyZoom(Math.max(imageScale, 1.15), focusX, focusY);
+    }
+
+    function resetZoom() {
+      imageScale = 1;
+      imageOffsetX = 0;
+      imageOffsetY = 0;
+      imageLayer.style.transform = 'translate(0px, 0px) scale(1)';
+      imageLayer.classList.remove('is-zoomed');
     }
 
     function openMillGame() {
       gameModal.classList.add('is-open');
       gameModal.setAttribute('aria-hidden', 'false');
       resetMillGame();
-    }
-
-    function resetZoom() {
-      imageLayer.classList.remove('is-zoomed');
-      zoomControl.textContent = 'Zoom resetten';
     }
 
     function closeMillGame() {
@@ -519,7 +584,78 @@
         resetMillGame();
       });
     });
-    zoomControl.addEventListener('click', () => {
+
+    imageLayer.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      const nextScale = event.deltaY > 0 ? imageScale * 0.9 : imageScale * 1.12;
+      applyZoom(nextScale, event.clientX, event.clientY);
+    }, { passive: false });
+
+    imageLayer.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('.hotspot')) return;
+      dragState = { x: event.clientX, y: event.clientY, startX: imageOffsetX, startY: imageOffsetY };
+      imageLayer.setPointerCapture(event.pointerId);
+    });
+
+    imageLayer.addEventListener('pointermove', (event) => {
+      if (!dragState || imageScale <= 1) return;
+      const dx = event.clientX - dragState.x;
+      const dy = event.clientY - dragState.y;
+      imageOffsetX = dragState.startX + dx;
+      imageOffsetY = dragState.startY + dy;
+      const maxX = (imageScale - 1) * imageLayer.clientWidth;
+      const maxY = (imageScale - 1) * imageLayer.clientHeight;
+      imageOffsetX = Math.min(0, Math.max(-maxX, imageOffsetX));
+      imageOffsetY = Math.min(0, Math.max(-maxY, imageOffsetY));
+      imageLayer.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageScale})`;
+    });
+
+    imageLayer.addEventListener('pointerup', () => { dragState = null; });
+    imageLayer.addEventListener('pointerleave', () => { dragState = null; });
+
+    imageLayer.addEventListener('touchstart', (event) => {
+      if (event.touches.length === 2) {
+        const [a, b] = [event.touches[0], event.touches[1]];
+        const dx = a.clientX - b.clientX;
+        const dy = a.clientY - b.clientY;
+        pinchStartDistance = Math.hypot(dx, dy);
+        pinchStartScale = imageScale;
+      } else if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        dragState = { x: touch.clientX, y: touch.clientY, startX: imageOffsetX, startY: imageOffsetY };
+      }
+    }, { passive: true });
+
+    imageLayer.addEventListener('touchmove', (event) => {
+      if (event.touches.length === 2 && pinchStartDistance) {
+        event.preventDefault();
+        const [a, b] = [event.touches[0], event.touches[1]];
+        const dx = a.clientX - b.clientX;
+        const dy = a.clientY - b.clientY;
+        const distance = Math.hypot(dx, dy);
+        const ratio = distance / pinchStartDistance;
+        applyZoom(pinchStartScale * ratio, (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
+      } else if (event.touches.length === 1 && dragState && imageScale > 1) {
+        const touch = event.touches[0];
+        const dx = touch.clientX - dragState.x;
+        const dy = touch.clientY - dragState.y;
+        imageOffsetX = dragState.startX + dx;
+        imageOffsetY = dragState.startY + dy;
+        const maxX = (imageScale - 1) * imageLayer.clientWidth;
+        const maxY = (imageScale - 1) * imageLayer.clientHeight;
+        imageOffsetX = Math.min(0, Math.max(-maxX, imageOffsetX));
+        imageOffsetY = Math.min(0, Math.max(-maxY, imageOffsetY));
+        imageLayer.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageScale})`;
+      }
+    }, { passive: false });
+
+    imageLayer.addEventListener('touchend', () => {
+      pinchStartDistance = null;
+      pinchStartScale = imageScale;
+      dragState = null;
+    });
+
+    imageLayer.addEventListener('dblclick', () => {
       resetZoom();
     });
   </script>
