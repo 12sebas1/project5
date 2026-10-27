@@ -170,7 +170,8 @@
       });
     });
     card.querySelector('.close').addEventListener('click', () => card.classList.remove('is-open'));
-    document.querySelector('.info-link').addEventListener('click', () => card.classList.add('is-open'));
+    const infoLink = document.querySelector('.info-link');
+    if (infoLink) infoLink.addEventListener('click', () => card.classList.add('is-open'));
     zoomControl.addEventListener('click', () => {
       imageLayer.classList.remove('is-zoomed');
       zoomControl.textContent = 'Zoom resetten';
