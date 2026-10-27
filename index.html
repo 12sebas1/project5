@@ -128,6 +128,16 @@
 			background: #b9c7b6;
 		}
 
+		.art-image {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.art.has-image::before, .art.has-image::after { display: none; }
+
 		.art::before {
 			position: absolute;
 			inset: 0;
@@ -227,8 +237,8 @@
 				<div class="art middeleeuwen"><span class="art-label">PLACEHOLDER 02</span></div>
 				<div class="plate-info"><span class="plate-title">De middeleeuwen</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
-			<a class="plate is-featured" href="plaat3">
-				<div class="art romeinen"><span class="art-label">AFBEELDING 03</span></div>
+			<a class="plate is-featured" href="plaat3/index.html">
+				<div class="art romeinen has-image"><img class="art-image" src="plaat3/plaat.jpg" alt=""></div>
 				<div class="plate-info"><span class="plate-title">Oog in oog<br>met de Romeinen</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 			<a class="plate" href="#schoolplaat-4">
@@ -255,4 +265,3 @@
 	</main>
 </body>
 </html>
-
