@@ -20,7 +20,9 @@
       touch-action: none;
       user-select: none;
     }
-    .image-layer.is-zoomed { }
+    .image-layer.is-zoomed {
+      
+     }
     .scene-image {
       width: 100%;
       height: 100%;
@@ -63,11 +65,15 @@
     .spot-seven { top: 53%; left: 37%; }
     .spot-eight { top: 34%; left: 53%; }
     .spot-nine { top: 77%; left: 41%; }
-    .fact-card { position: absolute; z-index: 4; top: 36%; left: 21%; display: none; width: min(355px, calc(100% - 28px)); padding: 13px 44px 13px 14px; border-radius: 8px; background: rgba(255, 255, 255, .96); box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
-    .fact-card.is-open { display: block; }
-    .fact-card h2 { margin: 0 0 5px; font-size: 16px; }
-    .fact-card p { margin: 0; color: #52606a; font-size: 12px; line-height: 1.3; }
-    .fact-card .close { position: absolute; top: 7px; right: 9px; padding: 2px; cursor: pointer; border: 0; background: none; color: #67727a; font-size: 18px; }
+    .fact-card { position: fixed; inset: 50% auto auto 50%; z-index: 8; display: none; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); width: min(920px, calc(100% - 48px)); max-height: calc(100vh - 48px); overflow: hidden; transform: translate(-50%, -50%); border: 5px solid #fff; border-radius: 12px; background: #fff; box-shadow: 0 14px 40px rgba(0, 0, 0, .4); }
+    .fact-card.is-open { display: grid; }
+    .fact-media { min-height: 360px; background: #17232b; }
+    .fact-media img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
+    .fact-content { position: relative; overflow: auto; padding: 28px 30px 24px; }
+    .fact-card h2 { margin: 0 0 14px; font-size: clamp(22px, 3vw, 32px); line-height: 1.05; }
+    .fact-card .fact-copy > p { margin: 0; color: #52606a; font-size: 15px; line-height: 1.5; }
+    .fact-card .close { position: absolute; top: 8px; right: 10px; z-index: 1; width: 34px; height: 34px; padding: 0; cursor: pointer; border: 0; border-radius: 50%; background: #edf4f7; color: #53616b; font-size: 25px; line-height: 1; }
+    .fact-card .close:hover, .fact-card .close:focus-visible { background: #d9e8ee; outline: none; }
     .activity { margin-top: 12px; padding-top: 10px; border-top: 1px solid #dce2e4; }
     .activity h3 { margin: 0 0 7px; font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
     .choices { display: grid; gap: 6px; }
@@ -76,17 +82,35 @@
     .choice.is-correct { color: #145f37; border-color: #50ad79; background: #e3f5e9; }
     .choice.is-wrong { color: #8c2e25; border-color: #d8877e; background: #fbe8e5; }
     .activity-result { min-height: 15px; margin: 7px 0 0; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; }
-    .game-modal { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 18px; visibility: hidden; opacity: 0; background: rgba(9, 29, 42, .62); transition: opacity .2s ease, visibility .2s ease; }
+    .game-modal { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 24px; visibility: hidden; opacity: 0; background: rgba(9, 29, 42, .62); transition: opacity .2s ease, visibility .2s ease; }
     .game-modal.is-open { visibility: visible; opacity: 1; }
-    .game-dialog { position: relative; width: min(430px, 100%); max-height: calc(100vh - 24px); overflow: auto; padding: 24px; text-align: center; border: 3px solid #d3b87a; border-radius: 12px; background: #fffaf0; box-shadow: 0 12px 35px rgba(0, 0, 0, .35); }
+    .game-dialog { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(230px, .85fr); gap: 24px; width: min(920px, 100%); max-height: calc(100vh - 48px); overflow: auto; padding: 28px; text-align: center; border: 5px solid #fff; border-radius: 12px; background: #fffaf0; box-shadow: 0 12px 35px rgba(0, 0, 0, .35); }
+    .game-fact-copy { grid-column: 2; grid-row: 1; align-self: center; padding: 0 12px; text-align: left; }
+    .game-fact-copy > p { font-size: 17px; line-height: 1.45; }
+    .game-fact-copy h3 { margin: 32px 0 10px; font-size: 21px; }
+    .game-fact-copy .game-instructions { font-size: 14px !important; line-height: 1.45; }
+    .game-play { position: relative; grid-column: 1; grid-row: 1; min-width: 0; padding: 14px; border-radius: 8px; background: #f1eee8; transition: background .2s ease; }
+    .game-board-area { position: relative; width: min(100%, 310px); margin: 0 auto 12px; }
+    .game-play:not(.is-playing)::after { position: absolute; inset: 0; z-index: 1; content: ''; pointer-events: none; border-radius: 8px; background: rgba(48, 55, 60, .7); }
+    .game-play.is-playing .game-modes { display: none; }
+    .game-play.turn-blue { background: #d7edfb; }
+    .game-play.turn-red { background: #f8deda; }
+    .game-play.turn-blue .mill-board { border-color: #247bc0; background: #b8def5 !important; }
+    .game-play.turn-red .mill-board { border-color: #b84c3d; background: #efc1bc !important; }
+    .game-play.turn-blue .board-line,
+    .game-play.turn-blue .mill-board::before,
+    .game-play.turn-blue .mill-board::after { background-color: #247bc0; border-color: #247bc0; }
+    .game-play.turn-red .board-line,
+    .game-play.turn-red .mill-board::before,
+    .game-play.turn-red .mill-board::after { background-color: #b84c3d; border-color: #b84c3d; }
     .game-dialog h2 { margin: 0 0 5px; font-size: 28px; }
     .game-dialog > p { margin: 0 auto 15px; color: #53616b; font-size: 14px; line-height: 1.35; }
-    .game-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 auto 10px; }
+    .game-modes { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; width: 86%; gap: 6px; margin: 0; transform: translate(-50%, -50%); }
     .game-mode { min-width: 0; padding: 7px 6px; cursor: pointer; color: #21435e; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; border: 1px solid #b9cedc; border-radius: 5px; background: #edf7fc; }
     .game-mode.is-selected, .game-mode:hover, .game-mode:focus-visible { color: white; border-color: #165997; background: #165997; outline: none; }
     .game-instructions { margin: 0 auto 12px !important; padding: 9px 11px; text-align: left; font-family: Arial, sans-serif; font-size: 11px !important; border-left: 3px solid #d3b87a; background: #f8f0dc; }
     .modal-close { position: absolute; top: 8px; right: 11px; padding: 2px 7px; cursor: pointer; color: #53616b; font-size: 24px; border: 0; background: transparent; }
-    .mill-board { position: relative; width: min(100%, 310px); aspect-ratio: 1; margin: 4px auto 12px; border: 4px solid #80562e; background: #ead7ae; box-shadow: inset 0 0 0 5px rgba(255, 250, 228, .35), 0 4px 10px rgba(0, 0, 0, .2); }
+    .mill-board { position: relative; width: 100%; aspect-ratio: 1; margin: 0; border: 4px solid #80562e; background: #ead7ae; box-shadow: inset 0 0 0 5px rgba(255, 250, 228, .35), 0 4px 10px rgba(0, 0, 0, .2); }
     .mill-board::before, .mill-board::after { position: absolute; content: ''; border: 3px solid #80562e; }
     .mill-board::before { inset: 16.5%; }
     .mill-board::after { inset: 33%; }
@@ -111,15 +135,20 @@
     .point-16 { top: 33%; left: 33%; } .point-17 { top: 33%; left: 50%; } .point-18 { top: 33%; left: 67%; }
     .point-19 { top: 50%; left: 67%; } .point-20 { top: 67%; left: 67%; } .point-21 { top: 67%; left: 50%; }
     .point-22 { top: 67%; left: 33%; } .point-23 { top: 50%; left: 33%; }
-    .game-status { min-height: 18px; margin: 0 0 8px !important; padding: 7px 9px; color: #35434b !important; font-family: Arial, sans-serif; font-size: 12px !important; font-weight: 700; border-radius: 5px; background: #f2ead8; }
-    .game-status.computer-thinking { color: #165997 !important; background: #e4f2fb; }
-    .game-log { min-height: 30px; margin: 9px auto 0; padding: 7px 9px; color: #52606a; text-align: left; font-family: Arial, sans-serif; font-size: 11px; line-height: 1.35; border: 1px solid #d8c898; border-radius: 5px; background: #fffdf5; }
+    .game-status { min-height: 18px; margin: 0 0 8px !important; padding: 7px 9px; color: #35434b !important; font-family: Arial, sans-serif; font-size: 12px !important; font-weight: 700; border-radius: 5px; background: none; }
+    .game-log { min-height: 30px; margin: 9px auto 0; padding: 7px 9px; color: #52606a; text-align: left; font-family: Arial, sans-serif; font-size: 11px; line-height: 1.35;text-align:center; background: none; }
     .game-legend { display: flex; justify-content: center; gap: 16px; margin: 0; color: #53616b; font-family: Arial, sans-serif; font-size: 11px; }
     .legend-blue::before, .legend-red::before { display: inline-block; width: 10px; height: 10px; margin-right: 4px; content: ''; vertical-align: -1px; border-radius: 50%; }
     .legend-blue::before { background: #247bc0; } .legend-red::before { background: #b84c3d; }
     .reset-game { margin-top: 10px; padding: 7px 12px; cursor: pointer; color: #21435e; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; border: 1px solid #b9cedc; border-radius: 5px; background: #edf7fc; }
     .reset-game:hover, .reset-game:focus-visible { border-color: var(--blue); background: #d9effc; outline: none; }
     .game-result { min-height: 18px; margin: 12px 0 0 !important; font-family: Arial, sans-serif; font-size: 12px !important; font-weight: 700; }
+    .winner-banner { position: fixed; top: 50%; left: 50%; z-index: 22; display: none; width: min(760px, calc(100% - 32px)); padding: 28px 20px; transform: translate(-50%, -50%) rotate(-2deg); color: #fff; text-align: center; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(42px, 9vw, 92px); font-weight: 700; line-height: .95; text-shadow: 0 4px 0 #165997, 0 8px 18px rgba(0, 0, 0, .35); border: 6px solid #fff; border-radius: 16px; background: #247bc0; box-shadow: 0 14px 35px rgba(0, 0, 0, .4); animation: winnerPop .45s cubic-bezier(.2, 1.4, .4, 1); }
+    .winner-banner.is-visible { display: block; }
+    .confetti { position: fixed; inset: 0; z-index: 21; overflow: hidden; pointer-events: none; }
+    .confetti-piece { position: absolute; top: -12vh; left: var(--x); width: 10px; height: 18px; background: var(--color); opacity: 0; transform: rotate(var(--rotation)); animation: confettiFall 2.8s ease-out var(--delay) forwards; }
+    @keyframes winnerPop { from { opacity: 0; transform: translate(-50%, -50%) scale(.45) rotate(-8deg); } to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-2deg); } }
+    @keyframes confettiFall { 0% { opacity: 1; transform: translate3d(0, -5vh, 0) rotate(var(--rotation)); } 100% { opacity: 1; transform: translate3d(var(--drift), 115vh, 0) rotate(calc(var(--rotation) + 540deg)); } }
     @media (max-width: 650px) {
       body { overflow: auto; }
       .scene { height: auto; min-height: 100vh; }
@@ -127,7 +156,15 @@
       .title-card { top: 62px; right: 12px; width: 215px; }
       .title-card h1 { font-size: 17px; }
       .hotspot { width: 26px; height: 26px; border-width: 4px; }
-      .fact-card { top: 39%; left: 14px; }
+      .fact-card { inset: 12px; width: auto; max-height: calc(100vh - 24px); transform: none; grid-template-columns: 1fr; overflow: auto; }
+      .fact-media { min-height: 190px; max-height: 34vh; }
+      .fact-content { padding: 24px 18px 18px; }
+      .game-modal { padding: 12px; }
+      .game-dialog { grid-template-columns: 1fr; max-height: calc(100vh - 24px); padding: 24px 18px; }
+      .game-fact-copy, .game-play { grid-column: 1; }
+      .game-fact-copy { grid-row: 1; text-align: center; }
+      .game-play { grid-row: 2; }
+      .game-board-area { width: min(100%, 310px); }
       .game-modes { grid-template-columns: 1fr; }
     }
   </style>
@@ -157,27 +194,40 @@
     <a class="back-link" href="../index.html">← <span>Terug naar overzicht</span></a>
     <a class="info-link" href="#fact-card">ⓘ <span>Meer weten over de Romeinen?</span></a>
 
-    <article class="fact-card is-open" id="fact-card">
+    <article class="fact-card" id="fact-card">
       <button class="close" type="button" aria-label="Sluiten">×</button>
-      <div class="fact-copy">
-        <h2>Romeinse soldaat</h2>
-        <p>De Romeinse soldaten bewaakten de grenzen, trokken door het landschap en woonden in forten zoals dit.</p>
+      <div class="fact-media">
+        <img src="plaat.jpg" alt="Detail van de Romeinse schoolplaat">
       </div>
-      <div class="activity" id="activity"></div>
+      <div class="fact-content">
+        <div class="fact-copy">
+          <h2>Romeinse soldaat</h2>
+          <p>De Romeinse soldaten bewaakten de grenzen, trokken door het landschap en woonden in forten zoals dit.</p>
+        </div>
+        <div class="activity" id="activity"></div>
+      </div>
     </article>
 
     <section class="game-modal" id="game-modal" aria-hidden="true">
       <div class="game-dialog" role="dialog" aria-modal="true" aria-labelledby="game-title">
         <button class="modal-close" id="modal-close" type="button" aria-label="Molenspel sluiten">×</button>
-        <h2 id="game-title">Het Molenspel</h2>
-        <div class="game-modes" role="group" aria-label="Spelmodus">
-          <button class="game-mode is-selected" type="button" data-mode="computer">Tegen de computer</button>
-          <button class="game-mode" type="button" data-mode="two-player">Twee spelers</button>
-          <button class="game-mode" type="button" data-mode="computer-computer">Computer tegen zichzelf</button>
+        <div class="confetti" id="confetti" aria-hidden="true"></div>
+        <div class="winner-banner" id="winner-banner" role="status" aria-live="assertive"></div>
+        <div class="game-fact-copy">
+          <h2>Handel en dagelijks leven</h2>
+          <p>In de nederzetting kwamen mensen samen om te handelen, te werken en nieuws uit te wisselen.</p>
+          <h3>Hoe werkt het?</h3>
+          <p class="game-instructions"><strong>Zo speel je:</strong> plaats om de beurt je negen stenen op een punt. Drie eigen stenen op een rij vormen een molen. Dan mag je een steen van de tegenstander wegnemen. Als alle stenen staan, verschuif je telkens een steen naar een aangrenzend leeg punt. Een speler wint zodra de tegenstander minder dan drie stenen heeft of geen zet meer kan doen.</p>
         </div>
-        <p class="game-instructions"><strong>Zo speel je:</strong> plaats om de beurt je negen stenen op een punt. Drie eigen stenen op een rij vormen een molen. Dan mag je een steen van de tegenstander wegnemen. Als alle stenen staan, verschuif je telkens een steen naar een aangrenzend leeg punt. Een speler wint zodra de tegenstander minder dan drie stenen heeft of geen zet meer kan doen.</p>
-        <p class="game-status" id="game-status" aria-live="polite"></p>
-        <div class="mill-board" id="mill-board" aria-label="Molenspelbord">
+        <div class="game-play">
+          <h2 id="game-title">Het Molenspel</h2>
+          <div class="game-board-area">
+            <div class="game-modes" role="group" aria-label="Spelmodus">
+              <button class="game-mode is-selected" type="button" data-mode="computer">Tegen de computer</button>
+              <button class="game-mode" type="button" data-mode="two-player">Twee spelers</button>
+              <button class="game-mode" type="button" data-mode="computer-computer">Computer tegen zichzelf</button>
+            </div>
+            <div class="mill-board" id="mill-board" aria-label="Molenspelbord">
           <span class="board-line vertical"></span><span class="board-line vertical bottom"></span>
           <span class="board-line horizontal"></span><span class="board-line horizontal right"></span>
           <button class="mill-point point-0" data-point="0" type="button" aria-label="Punt 1"></button>
@@ -203,12 +253,15 @@
           <button class="mill-point point-20" data-point="20" type="button" aria-label="Punt 21"></button>
           <button class="mill-point point-21" data-point="21" type="button" aria-label="Punt 22"></button>
           <button class="mill-point point-22" data-point="22" type="button" aria-label="Punt 23"></button>
-          <button class="mill-point point-23" data-point="23" type="button" aria-label="Punt 24"></button>
+              <button class="mill-point point-23" data-point="23" type="button" aria-label="Punt 24"></button>
+            </div>
+          </div>
+          <p class="game-legend"><span class="legend-blue">Blauw: jij</span><span class="legend-red">Rood: tegenstander</span></p>
+          <p class="game-result" id="game-result" aria-live="polite"></p>
+          <p class="game-status" id="game-status" aria-live="polite"></p>
+          <p class="game-log" id="game-log" aria-live="polite">De uitleg van de zetten verschijnt hier.</p>
+          <button class="reset-game" id="reset-game" type="button">Nieuw spel</button>
         </div>
-        <p class="game-legend"><span class="legend-blue">Blauw: jij</span><span class="legend-red">Rood: tegenstander</span></p>
-        <p class="game-result" id="game-result" aria-live="polite"></p>
-        <p class="game-log" id="game-log" aria-live="polite">De uitleg van de zetten verschijnt hier.</p>
-        <button class="reset-game" id="reset-game" type="button">Nieuw spel</button>
       </div>
     </section>
   </main>
@@ -234,6 +287,10 @@
     const gameResult = document.querySelector('#game-result');
     const gameLog = document.querySelector('#game-log');
     const gameStatus = document.querySelector('#game-status');
+    const winnerBanner = document.querySelector('#winner-banner');
+    const confetti = document.querySelector('#confetti');
+    const gamePlay = document.querySelector('.game-play');
+    const millBoard = document.querySelector('#mill-board');
     const gamePoints = [...document.querySelectorAll('.mill-point')];
     const millLines = [[0, 1, 2], [2, 3, 4], [4, 5, 6], [6, 7, 0], [8, 9, 10], [10, 11, 12], [12, 13, 14], [14, 15, 8], [16, 17, 18], [18, 19, 20], [20, 21, 22], [22, 23, 16], [1, 9, 17], [3, 11, 19], [5, 13, 21], [7, 15, 23]];
     const neighbours = {
@@ -249,6 +306,8 @@
     let gameMode = 'computer';
     let gameOver = false;
     let computerTimer = null;
+    let winnerMusicTimer = null;
+    let audioContext = null;
     let lastMove = null;
     let statusMessage = '';
     let imageScale = 1;
@@ -342,6 +401,7 @@
     }
 
     function openMillGame() {
+      card.classList.remove('is-open');
       gameModal.classList.add('is-open');
       gameModal.setAttribute('aria-hidden', 'false');
       resetMillGame();
@@ -350,11 +410,13 @@
     function closeMillGame() {
       gameModal.classList.remove('is-open');
       gameModal.setAttribute('aria-hidden', 'true');
+      clearWinnerCelebration();
       resetZoom();
     }
 
     function resetMillGame() {
       millState = Array(24).fill(null);
+      gamePlay.classList.remove('is-playing');
       currentPlayer = 'blue';
       piecesToPlace = { blue: 9, red: 9 };
       selectedPoint = null;
@@ -363,6 +425,7 @@
       lastMove = null;
       statusMessage = '';
       window.clearTimeout(computerTimer);
+      clearWinnerCelebration();
       gameResult.textContent = '';
       gameLog.textContent = gameMode === 'computer-computer'
         ? 'De twee computers gaan om de beurt spelen.'
@@ -377,6 +440,10 @@
     }
 
     function renderMillGame() {
+      gamePlay.classList.toggle('turn-blue', currentPlayer === 'blue');
+      gamePlay.classList.toggle('turn-red', currentPlayer === 'red');
+      millBoard.classList.toggle('turn-blue', currentPlayer === 'blue');
+      millBoard.classList.toggle('turn-red', currentPlayer === 'red');
       gamePoints.forEach((point, index) => {
         point.classList.remove('blue', 'red', 'selected');
         if (millState[index]) point.classList.add(millState[index]);
@@ -440,13 +507,59 @@
       const redCount = millState.filter((owner) => owner === 'red').length;
       if (blueCount < 3 || !hasAvailableMove('blue')) {
         gameOver = true;
-        gameStatus.textContent = gameMode === 'computer-computer' ? 'Rood wint dit spel.' : 'De computer wint dit spel.';
+        announceWinner(gameMode === 'computer-computer' ? 'Rood wint!' : 'De computer wint!');
       } else if (redCount < 3 || !hasAvailableMove('red')) {
         gameOver = true;
-        gameStatus.textContent = gameMode === 'computer-computer' ? 'Blauw wint dit spel.' : 'Jij wint dit spel!';
+        announceWinner(gameMode === 'computer-computer' ? 'Blauw wint!' : 'Jij wint!');
       }
       if (gameOver) gameResult.textContent = 'Klik op “Nieuw spel” om nog een keer te spelen.';
       return gameOver;
+    }
+
+    function announceWinner(message) {
+      gameStatus.textContent = message;
+      winnerBanner.textContent = message;
+      winnerBanner.classList.add('is-visible');
+      confetti.innerHTML = '';
+      const colors = ['#247bc0', '#b84c3d', '#f4c849', '#50ad79', '#f28c28', '#ffffff'];
+      for (let pieceIndex = 0; pieceIndex < 70; pieceIndex += 1) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.setProperty('--x', `${Math.random() * 100}%`);
+        piece.style.setProperty('--drift', `${(Math.random() - .5) * 260}px`);
+        piece.style.setProperty('--rotation', `${Math.random() * 360}deg`);
+        piece.style.setProperty('--delay', `${Math.random() * .45}s`);
+        piece.style.setProperty('--color', colors[pieceIndex % colors.length]);
+        confetti.append(piece);
+      }
+      playWinnerMusic();
+    }
+
+    function playWinnerMusic() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      audioContext = audioContext || new AudioContextClass();
+      audioContext.resume();
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((frequency, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const startTime = audioContext.currentTime + index * .16;
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = frequency;
+        gain.gain.setValueAtTime(.0001, startTime);
+        gain.gain.exponentialRampToValueAtTime(.16, startTime + .03);
+        gain.gain.exponentialRampToValueAtTime(.0001, startTime + .42);
+        oscillator.connect(gain).connect(audioContext.destination);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + .45);
+      });
+    }
+
+    function clearWinnerCelebration() {
+      winnerBanner.classList.remove('is-visible');
+      confetti.innerHTML = '';
+      window.clearTimeout(winnerMusicTimer);
     }
 
     function computerTurn() {
@@ -559,7 +672,10 @@
         heading.textContent = fact[0];
         text.textContent = fact[1];
         activity.innerHTML = '';
-        if (spot.dataset.action === 'game') openMillGame();
+        if (spot.dataset.action === 'game') {
+          openMillGame();
+          return;
+        }
         if (spot.dataset.action === 'quiz') showActivity(spot.dataset.action);
         zoomToHotspot(spot);
         card.classList.add('is-open');
@@ -582,6 +698,7 @@
         gameMode = modeButton.dataset.mode;
         document.querySelectorAll('.game-mode').forEach((button) => button.classList.toggle('is-selected', button === modeButton));
         resetMillGame();
+        gamePlay.classList.add('is-playing');
       });
     });
 
