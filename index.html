@@ -147,6 +147,17 @@
 			background: rgba(67, 94, 81, .33);
 		}
 
+		.art.has-image::before,
+		.art.has-image::after { display: none; }
+
+		.art-image {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
 		.art-label {
 			z-index: 1;
 			padding: 8px 12px;
@@ -227,8 +238,8 @@
 				<div class="art middeleeuwen"><span class="art-label">PLACEHOLDER 02</span></div>
 				<div class="plate-info"><span class="plate-title">De middeleeuwen</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
-			<a class="plate is-featured" href="plaat3">
-				<div class="art romeinen"><span class="art-label">AFBEELDING 03</span></div>
+			<a class="plate is-featured" href="plaat3/index.html">
+				<div class="art romeinen has-image"><img class="art-image" src="plaat3/plaat.jpg" alt="Oog in oog met de Romeinen"></div>
 				<div class="plate-info"><span class="plate-title">Oog in oog<br>met de Romeinen</span><span class="arrow" aria-hidden="true">›</span></div>
 			</a>
 			<a class="plate" href="#schoolplaat-4">
@@ -255,4 +266,3 @@
 	</main>
 </body>
 </html>
-
