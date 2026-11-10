@@ -449,7 +449,8 @@
 
 
     document.querySelector('#modal-close').addEventListener('click', () => {
-      window.parent.postMessage({ type: 'molenspel-sluiten' }, window.location.origin);
+      const targetOrigin = window.location.origin === 'null' ? '*' : window.location.origin;
+      window.parent.postMessage({ type: 'molenspel-sluiten' }, targetOrigin);
     });
     document.querySelector('#reset-game').addEventListener('click', resetMillGame);
     document.querySelectorAll('.game-mode').forEach((modeButton) => {

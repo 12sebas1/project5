@@ -102,14 +102,14 @@
     <div class="image-layer" id="image-layer">
       <img
         class="scene-image"
-        src="Plaat.jpg"
+        src="plaat.jpg"
         alt="Schoolplaat over een Romeinse nederzetting in Nederland"
         decoding="async"
         fetchpriority="high"
         sizes="100vw"
       >
 
-      <button class="hotspot" type="button" data-image-position="27,86" data-zoom="1.8" data-fact="spel" data-action="game" aria-label="Meer informatie en het molenspel"></button>
+      <button class="hotspot" type="button" data-image-position="27.1,72.8" data-zoom="1.8" data-fact="spel" data-action="game" aria-label="Meer informatie en het molenspel"></button>
       <button class="hotspot" type="button" data-image-position="84,37" data-zoom="2.1" data-fact="soldaat" data-action="quiz" aria-label="Meer informatie en quiz over de Romeinse soldaat"></button>
       <button class="hotspot" type="button" data-image-position="76,78" data-zoom="13" data-fact="dieren" aria-label="Meer informatie over dieren"></button>
       <button class="hotspot" type="button" data-image-position="57,47" data-zoom="2.4" data-fact="handel" aria-label="Meer informatie over handel"></button>
@@ -442,7 +442,7 @@
       if (event.target === gameModal) closeMillGame();
     });
     window.addEventListener('message', (event) => {
-      if (event.origin === window.location.origin && event.data?.type === 'molenspel-sluiten') closeMillGame();
+      if (event.source === gameFrame.contentWindow && event.data?.type === 'molenspel-sluiten') closeMillGame();
     });
     imageLayer.addEventListener('wheel', (event) => {
       event.preventDefault();
