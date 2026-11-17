@@ -7,53 +7,101 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --muur:#d9c9a8; --muur-donker:#c4b08a;
-  --papier:#f3ead6; --inkt:#2b1d14; --inkt-zacht:#6b5640;
+  --muur:#7b3226; --muur-donker:#3d1713; --muur-licht:#a04a36;
+  --papier:#f4ecd8; --inkt:#2b1d14; --inkt-zacht:#6b5640;
   --terracotta:#a8422c; --goud:#b8903c; --hout:#5a3a22;
+  --korrel:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .12 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  --pleister:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .018' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .01 0 0 0 0 .01 0 0 0 1.5 -.6'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23p)'/%3E%3C/svg%3E");
+  --meander:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 11V1h12v8H4V4h4' fill='none' stroke='%23b8903c' stroke-width='1.4'/%3E%3C/svg%3E");
 }
-*{box-sizing:border-box;margin:0}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 body{
   min-height:100vh; font-family:Lora,Georgia,serif; color:var(--inkt);
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(255,245,220,.55), transparent 60%),
-    repeating-linear-gradient(90deg, rgba(90,58,34,.035) 0 2px, transparent 2px 90px),
+    var(--pleister),
+    var(--korrel),
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,190,130,.22), transparent 70%),
     linear-gradient(var(--muur), var(--muur-donker));
-  padding:0 24px 80px;
+  background-attachment:fixed;
+  padding:0 24px;
 }
-header{text-align:center;padding:56px 0 20px}
-.merk{font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;color:var(--terracotta);font-weight:600}
-h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.8rem);margin:10px 0 6px}
-.sub{font-style:italic;color:var(--inkt-zacht);font-size:1.1rem}
-.rand{width:120px;height:12px;margin:22px auto 0;border-top:2px solid var(--goud);border-bottom:2px solid var(--goud);position:relative}
-.rand::after{content:"";position:absolute;inset:3px 0;background:var(--goud);opacity:.5}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 200px rgba(20,5,3,.65);z-index:10}
 
+/* kop */
+header{text-align:center;padding:60px 0 0}
+.merk{font-size:.75rem;letter-spacing:.32em;text-transform:uppercase;color:#e0be72;font-weight:600}
+h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:clamp(2.3rem,5vw,3.9rem);margin:10px 0 6px;color:#f6ead0;text-shadow:0 2px 6px rgba(20,5,3,.6)}
+.sub{font-style:italic;color:#e8d4b0;font-size:1.1rem}
+.band{height:12px;max-width:520px;margin:26px auto 0;background:var(--meander) repeat-x center}
 
-.wand{max-width:1180px;margin:48px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:64px 36px}
+.wand{max-width:1180px;margin:60px auto 0;padding-bottom:90px;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:70px 38px;align-items:start}
 
-/* plaat die aan een stok hangt */
-.plaat{display:block;text-decoration:none;color:inherit;position:relative;padding-top:18px;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
-.plaat::before,.plaat::after{content:"";position:absolute;top:0;width:2px;height:22px;background:var(--hout);z-index:2}
-.plaat::before{left:22%;transform:rotate(14deg);transform-origin:top} .plaat::after{right:22%;transform:rotate(-14deg);transform-origin:top}
-.stok{position:absolute;top:14px;left:-8px;right:-8px;height:10px;border-radius:5px;background:linear-gradient(var(--hout),#3a2414);box-shadow:0 3px 6px rgba(0,0,0,.35);z-index:3}
-.stok::before,.stok::after{content:"";position:absolute;top:-2px;width:14px;height:14px;border-radius:50%;background:var(--goud)}
-.stok::before{left:-6px}.stok::after{right:-6px}
-.papier{background:var(--papier);border:6px solid var(--papier);outline:1px solid rgba(90,58,34,.4);box-shadow:0 14px 28px rgba(60,35,15,.35),0 2px 4px rgba(60,35,15,.3);margin-top:8px}
-.plaat:nth-child(odd){transform:rotate(-.6deg)} .plaat:nth-child(even){transform:rotate(.5deg)}
-.plaat:hover,.plaat:focus-visible{transform:translateY(-8px) rotate(0);outline:none}
-.plaat:focus-visible .papier{outline:3px solid var(--terracotta)}
+/* plaat aan een stok */
+.plaat{position:relative;padding-top:18px;rotate:var(--r);z-index:1;
+  transition:transform .4s cubic-bezier(.2,.8,.2,1),rotate .4s;animation:op .7s both cubic-bezier(.2,.8,.2,1);animation-delay:calc(var(--i)*90ms)}
+@keyframes op{from{opacity:0;translate:0 24px}}
+.plaat:nth-child(odd){--r:-.6deg}.plaat:nth-child(even){--r:.5deg}
+.plaat::before,.plaat::after{content:"";position:absolute;top:0;width:2px;height:24px;background:#3a2414;z-index:2}
+.plaat::before{left:22%;transform:rotate(14deg);transform-origin:top}.plaat::after{right:22%;transform:rotate(-14deg);transform-origin:top}
+.stok{position:absolute;top:14px;left:-10px;right:-10px;height:11px;border-radius:6px;z-index:3;
+  background:linear-gradient(#7a502e,#4a2c18 60%,#321c0e);box-shadow:0 4px 7px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.2)}
+.stok::before,.stok::after{content:"";position:absolute;top:-3px;width:16px;height:17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6c673,var(--goud) 60%,#7a5a1c)}
+.stok::before{left:-7px}.stok::after{right:-7px}
+.wrap{position:relative;margin-top:9px}
+.papier{display:block;position:relative;padding:10px;color:inherit;text-decoration:none;background:var(--korrel),var(--papier);
+  box-shadow:0 20px 34px rgba(15,3,2,.6),0 3px 6px rgba(15,3,2,.5),inset 0 0 0 1px rgba(90,58,34,.35),inset 0 0 22px rgba(150,110,60,.25)}
+.papier:focus-visible{outline:3px solid var(--terracotta);outline-offset:3px}
 
-.beeld{aspect-ratio:4/3;background:var(--kleur,#8a7a5c);position:relative;overflow:hidden;border:1px solid rgba(43,29,20,.5)}
-.beeld img{width:100%;height:100%;object-fit:cover;display:block}
-.beeld .leeg{position:absolute;inset:0;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:3.4rem;color:rgba(255,255,255,.55);
-  background:repeating-linear-gradient(45deg,rgba(255,255,255,.07) 0 8px,transparent 8px 16px)}
-.tekst{padding:14px 6px 10px;text-align:center}
-.periode{margin-top:8px;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--terracotta);font-weight:600}
+.nr{position:absolute;top:-1px;left:50%;transform:translateX(-50%);z-index:4;padding:2px 12px;font-family:'Playfair Display',serif;font-weight:600;font-size:.8rem;letter-spacing:.15em;
+  color:#f4e3b8;background:var(--terracotta);border:1px solid #7d2a1a;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.beeld{aspect-ratio:4/3;background:var(--kleur,#8a7a5c);position:relative;overflow:hidden;border:1px solid rgba(43,29,20,.6);box-shadow:inset 0 0 0 3px var(--papier),inset 0 0 0 4px rgba(184,144,60,.8)}
+.beeld img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s ease}
+.beeld::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 40px rgba(30,15,5,.35);pointer-events:none}
+.leeg{position:absolute;inset:0;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:3.4rem;color:rgba(255,255,255,.5);transition:transform .8s ease;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.08) 0 8px,transparent 8px 16px)}
+
+.tekst{padding:12px 6px 4px;text-align:center}
 .titel{font-family:'Playfair Display',Georgia,serif;font-size:1.35rem;line-height:1.2}
-.bekijk{display:inline-block;margin-top:10px;font-size:.85rem;font-style:italic;color:var(--inkt-zacht);border-bottom:1px solid transparent;transition:.2s}
-.plaat:hover .bekijk{color:var(--terracotta);border-color:var(--terracotta)}
+.strik{width:44px;height:8px;margin:8px auto 0;background:var(--meander) repeat-x center}
+.periode{margin-top:9px;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--terracotta);font-weight:600}
+.uitleg{margin-top:8px;font-size:.88rem;font-style:italic;line-height:1.45;color:var(--inkt-zacht)}
+.hint{display:none;font-size:1.1rem;line-height:1;color:var(--terracotta);font-weight:600;margin-top:2px}
 
-@media (max-width:600px){.wand{gap:56px 24px}}
-@media (prefers-reduced-motion:reduce){.plaat{transition:none}}
+/* het uitrollende doek */
+.rol{position:relative;z-index:2;display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.3,.7,.2,1)}
+.rol-in{min-height:0;overflow:hidden;background:var(--korrel),var(--papier);
+  box-shadow:inset 8px 0 14px -10px rgba(120,80,40,.5),inset -8px 0 14px -10px rgba(120,80,40,.5)}
+.rol-body{margin:0 10px;padding:16px 8px 6px;text-align:center;border-top:1px dashed rgba(90,58,34,.4)}
+.rol-body .periode{margin-top:0}
+.rol-body p{margin-top:10px;font-size:.9rem;line-height:1.45}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tags span{font-size:.75rem;padding:3px 11px;border:1px solid var(--goud);border-radius:20px;color:var(--hout);background:rgba(184,144,60,.12)}
+.knop{display:flex;align-items:center;justify-content:center;min-height:52px;margin-top:14px;border-radius:6px;background:var(--terracotta);color:#f8ebc8;text-decoration:none;
+  font-family:'Playfair Display',serif;font-weight:600;font-size:1.05rem;box-shadow:0 3px 0 #6e2415,0 6px 10px rgba(60,20,10,.3);touch-action:manipulation}
+.knop:active{transform:translateY(2px);box-shadow:0 1px 0 #6e2415}
+.dicht{display:none;width:100%;min-height:48px;margin-top:6px;background:none;border:0;font:italic .9rem Lora,serif;color:var(--inkt-zacht);touch-action:manipulation}
+.staaf{position:relative;height:13px;margin:12px -6px 0;border-radius:7px;background:linear-gradient(#7a502e,#4a2c18 60%,#321c0e);box-shadow:0 5px 9px rgba(0,0,0,.4)}
+.staaf::before,.staaf::after{content:"";position:absolute;top:-2px;width:16px;height:17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e6c673,var(--goud) 60%,#7a5a1c)}
+.staaf::before{left:-6px}.staaf::after{right:-6px}
+
+/* actief: uitgerold (muis-hover, toetsenbord of getikt) */
+.plaat.open,.plaat:has(:focus-visible){translate:0 -10px;rotate:0deg;z-index:5}
+.plaat.open .rol,.plaat:has(:focus-visible) .rol{grid-template-rows:1fr}
+.plaat.open .beeld img,.plaat.open .leeg{transform:scale(1.06)}
+@media (hover:hover) and (pointer:fine){
+  .plaat:hover{translate:0 -10px;rotate:0deg;z-index:5}
+  .plaat:hover .rol{grid-template-rows:1fr}
+  .plaat:hover .beeld img,.plaat:hover .leeg{transform:scale(1.06)}
+}
+/* vingers: tikken om uit te rollen */
+@media (hover:none),(pointer:coarse){
+  .hint{display:block}
+  .plaat.open .hint{display:none}
+  .dicht{display:block}
+}
+
+@media (max-width:600px){.wand{gap:60px 24px}}
+@media (prefers-reduced-motion:reduce){.plaat,.beeld img,.leeg,.rol{transition:none;animation:none}}
 </style>
 </head>
 <body>
@@ -61,43 +109,77 @@ h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:clamp(
   <div class="merk">De wereld van toen</div>
   <h1>Reis door de tijd</h1>
   <p class="sub">Kies een schoolplaat en ga op ontdekking</p>
-  <div class="rand"></div>
+  <div class="band"></div>
 </header>
 
 <main class="wand" id="wand"></main>
 
 <script>
+/* ===== Hier voeg je platen toe, in volgorde van de tijd =====
+   id      = het deel achter # in je link (bijv. "schoolplaat-2")
+   plaatje = pad naar de afbeelding ("" laat een kleurvlak zien)
+   uitleg  = korte zin die verschijnt als het doek uitrolt (mag leeg)
+   tags    = wat er te doen is op de plaat (mag leeg)                */
 const platen = [
-  { id:"schoolplaat-1", titel:"De prehistorie",           periode:"Tot 800 v.Chr.", plaatje:"", kleur:"#8a5a44" },
-  { id:"schoolplaat-2", titel:"De Grieken",              periode:"800 – 146 v.Chr.", plaatje:"", kleur:"#4d6f8a" },
-  { id:"schoolplaat-3", titel:"Oog in oog met de Romeinen", periode:"12 v.Chr. – 450 n.Chr.", plaatje:"plaat3.jpg", kleur:"#a8422c", href:"plaat3/index.html" },
-  { id:"schoolplaat-4", titel:"De middeleeuwen",          periode:"500 – 1500",     plaatje:"", kleur:"#4f6b5c" },
-  { id:"schoolplaat-5", titel:"De Gouden Eeuw",         periode:"1600 – 1700",    plaatje:"", kleur:"#7a5a2e" },
-  { id:"schoolplaat-6", titel:"De industriële revolutie", periode:"1800 – 1900",    plaatje:"", kleur:"#5f6663" },
-  { id:"schoolplaat-7", titel:"De Tweede Wereldoorlog",   periode:"1939 – 1945",    plaatje:"", kleur:"#6e6a5e" },
-  { id:"schoolplaat-8", titel:"Nederland vandaag",        periode:"Nu",             plaatje:"", kleur:"#4a7168" }
+  { id:"schoolplaat-1", titel:"De prehistorie",             periode:"Tot 800 v.Chr.",         plaatje:"", kleur:"#8a5a44", uitleg:"Jagers, verzamelaars en de eerste boeren.", info:"Hoe leefden mensen toen er nog geen steden, geld of schrift bestonden? Ontdek hoe ze jaagden, bouwden en hun doden begroeven.", tags:["Lezen","Spelletjes"] },
+  { id:"schoolplaat-7", titel:"De Grieken",                 periode:"800 – 146 v.Chr.",       plaatje:"", kleur:"#4d6f8a", uitleg:"Stadstaten, filosofen en de eerste Olympische Spelen.", info:"Athene en Sparta waren totaal verschillend. Ontdek hoe de Grieken leefden, wat ze bedachten en wat wij nog van hen gebruiken.", tags:["Lezen","Spelletjes"] },
+  { id:"schoolplaat-2", titel:"Oog in oog met de Romeinen", periode:"12 v.Chr. – 450 n.Chr.", plaatje:"Plaat3.jpg", kleur:"#a8422c", uitleg:"Soldaten, handelaren en het leven aan de limes.", info:"Loop mee over de grens van het Romeinse Rijk. Wie woonde hier, wat deden ze en hoe zag een dag aan de limes eruit?", tags:["Lezen","Spelletjes"], href:"plaat3/index.html" },
+  { id:"schoolplaat-3", titel:"De middeleeuwen",            periode:"500 – 1500",             plaatje:"", kleur:"#4f6b5c", uitleg:"Ridders, kastelen en het leven in de stad.", info:"Boeren, monniken, ridders en kooplieden: ieder had zijn plek. Ontdek hoe het leven er in een middeleeuwse stad uitzag.", tags:["Lezen","Spelletjes"] },
+  { id:"schoolplaat-8", titel:"De Gouden Eeuw",             periode:"1600 – 1700",            plaatje:"", kleur:"#7a5a2e", uitleg:"Handel over zee, schilders en rijke kooplieden.", info:"Schepen vol specerijen, beroemde schilders en rijke regenten. Maar wie werd er rijk, en wie niet?", tags:["Lezen","Spelletjes"] },
+  { id:"schoolplaat-5", titel:"De industriële revolutie",   periode:"1800 – 1900",            plaatje:"", kleur:"#5f6663", uitleg:"Stoommachines, fabrieken en een veranderend land.", info:"Machines namen het werk over en steden groeiden snel. Hoe veranderde het dagelijks leven voor kinderen en volwassenen?", tags:["Lezen","Spelletjes"] },
+  { id:"schoolplaat-4", titel:"De Tweede Wereldoorlog",     periode:"1939 – 1945",            plaatje:"", kleur:"#6e6a5e", uitleg:"Bezetting, verzet en bevrijding.", info:"Hoe was het om in Nederland te leven tijdens de bezetting? Ontdek verhalen van gewone mensen in een bijzondere tijd.", tags:["Lezen","Spelletjes"] },
+  { id:"schoolplaat-6", titel:"Nederland vandaag",          periode:"Nu",                     plaatje:"", kleur:"#4a7168", uitleg:"Hoe wij nu leven, en waar dat vandaan komt.", info:"Veel van wat je dagelijks ziet heeft een lange geschiedenis. Ontdek wat er sinds vroeger is veranderd en wat gelijk bleef.", tags:["Lezen","Spelletjes"] }
 ];
 
+const romeins = n => { const t=[[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]]; let r=""; t.forEach(([v,s])=>{while(n>=v){r+=s;n-=v}}); return r; };
 const wand = document.getElementById("wand");
-platen.forEach(p=>{
-  const a = document.createElement("a");
-  a.className = "plaat";
-  a.href = p.href || "#" + p.id;
-  a.style.setProperty("--kleur", p.kleur);
-  a.innerHTML = `
+platen.forEach((p,i)=>{
+  const el = document.createElement("article");
+  const bestemming = p.href || `#${p.id}`;
+  el.className = "plaat";
+  el.style.setProperty("--kleur", p.kleur);
+  el.style.setProperty("--i", i);
+  el.innerHTML = `
     <div class="stok"></div>
-    <div class="papier">
-      <div class="beeld">
-        ${p.plaatje ? `<img src="${p.plaatje}" alt="${p.titel}">` : `<div class="leeg">?</div>`}
-      </div>
-      <div class="tekst">
-        <div class="titel">${p.titel}</div>
-        <div class="periode">${p.periode}</div>
-        <span class="bekijk">Bekijk de plaat →</span>
-      </div>
+    <div class="wrap">
+      <a class="papier" href="${bestemming}" aria-label="Open schoolplaat: ${p.titel}">
+        <div class="nr">PLAAT ${romeins(i+1)}</div>
+        <div class="beeld">
+          ${p.plaatje ? `<img src="${p.plaatje}" alt="">` : `<div class="leeg">?</div>`}
+        </div>
+        <div class="tekst">
+          <div class="titel">${p.titel}</div>
+          <div class="hint" aria-hidden="true">⌄</div>
+        </div>
+      </a>
+      <div class="rol"><div class="rol-in">
+        <div class="rol-body">
+          <div class="periode">${p.periode}</div>
+          <div class="strik"></div>
+          ${p.uitleg ? `<p>${p.uitleg}</p>` : ""}
+          ${p.tags && p.tags.length ? `<div class="tags">${p.tags.map(t=>`<span>${t}</span>`).join("")}</div>` : ""}
+          <a class="knop" href="${bestemming}">Open de plaat →</a>
+          <button class="dicht" type="button">Rol weer op ⌃</button>
+          <div class="staaf"></div>
+        </div>
+      </div></div>
     </div>`;
-  wand.appendChild(a);
+  wand.appendChild(el);
 });
+
+/* Vingers: eerste tik rolt uit, tweede tik (of de knop) opent de plaat */
+const aanraking = matchMedia("(hover: none), (pointer: coarse)");
+const sluitAlles = () => document.querySelectorAll(".plaat.open").forEach(x=>x.classList.remove("open"));
+document.addEventListener("click", e=>{
+  if(!aanraking.matches) return;
+  const plaat = e.target.closest(".plaat");
+  if(e.target.closest(".dicht")){ sluitAlles(); return; }
+  if(!plaat){ sluitAlles(); return; }
+  if(!plaat.classList.contains("open") && e.target.closest(".papier")){
+    e.preventDefault(); sluitAlles(); plaat.classList.add("open");
+  }
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") sluitAlles(); });
 </script>
 </body>
 </html>
