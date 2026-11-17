@@ -136,7 +136,7 @@
       <button class="hotspot" type="button" data-image-position="73,55" data-zoom="2.1" data-fact="marskamp" aria-label="Meer informatie over het marskamp"></button>
       <button class="hotspot" type="button" data-image-position="58,31" data-zoom="2.5" data-fact="dorp" aria-label="Meer informatie over het dorp"></button>
       <button class="hotspot" type="button" data-image-position="54,68" data-zoom="1.8" data-fact="rivier" aria-label="Meer informatie over de rivier en de geul"></button>
-      <button class="hotspot" type="button" data-image-position="34,66" data-zoom="2.5" data-fact="kinderen" aria-label="Meer informatie over de kinderen"></button>
+      <button class="hotspot" type="button" data-image-position="34,66" data-zoom="2.5" data-fact="kinderen" data-activity="game" aria-label="Meer informatie en een mini-game over de kinderen"></button>
 
     </div>
     <div class="position-tools" role="group" aria-label="Hotspotposities">
@@ -226,7 +226,7 @@
       question: 'Wat zie je op de voorgrond van de plaat?',
       choices: ['Mensen die een spel spelen', 'Een moderne auto', 'Een vliegtuig'],
       answer: 0,
-      success: 'Precies! Op de voorgrond spelen mensen samen een bordspel.'
+      success: 'Precies! Op de voorgrond spelen mensen samen het molenspel.'
     };
 
     function positionHotspots() {
@@ -427,6 +427,7 @@
       factImage.alt = imageAlt;
       activity.innerHTML = '';
       if (spot.dataset.action === 'quiz') showActivity(spot.dataset.action);
+      if (spot.dataset.activity) showActivity(spot.dataset.activity);
       if (spot.dataset.action === 'game') {
         openMillGame();
         return;
