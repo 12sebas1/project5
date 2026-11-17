@@ -178,9 +178,20 @@
       kinderen: ['Kinderen in het dagelijks leven', 'Op de plaat spelen kinderen buiten bij de volwassenen. Ook in de Romeinse tijd bestond het dagelijks leven niet alleen uit werken: kinderen speelden, leerden en hielpen mee in en rond het dorp.'],
       vogel: ['Dieren in de omgeving', 'De vogel boven het landschap laat zien dat het dorp en het marskamp midden in een open, natuurlijke omgeving lagen. De Romeinen moesten tijdens hun tochten rekening houden met het landschap en de dieren die daar leefden.']
     };
+    const factImages = {
+      spel: ['plaat.jpg', 'De Romeinse schoolplaat met mensen op de voorgrond'],
+      soldaat: ['img/soldaat.jpg', 'Uitlegplaat van een Romeinse soldaat'],
+      dieren: ['img/dier.jpg', 'Romeinse afbeelding van dieren bij een kar'],
+      handel: ['img/Romeinse-grensdorp.jpg', 'Handel en dagelijks leven in een Romeins dorp'],
+      marskamp: ['img/marskamp.jpg', 'Overzicht van een Romeins marskamp'],
+      dorp: ['img/dorp.jpeg', 'Reconstructie van een Romeins dorp'],
+      rivier: ['img/geul.jpg', 'Geul rond een Romeins marskamp'],
+      kinderen: ['img/kind.jpg', 'Afbeelding van een kind in de Romeinse tijd'],
+    };
     const card = document.querySelector('#fact-card');
     const heading = card.querySelector('h2');
     const text = card.querySelector('p');
+    const factImage = card.querySelector('.fact-media img');
     const activity = document.querySelector('#activity');
     const scene = document.querySelector('.scene');
     const imageLayer = document.querySelector('#image-layer');
@@ -409,8 +420,11 @@
 
     function openHotspotPopup(spot) {
       const fact = facts[spot.dataset.fact];
+      const [imageSource, imageAlt] = factImages[spot.dataset.fact];
       heading.textContent = fact[0];
       text.textContent = fact[1];
+      factImage.src = imageSource;
+      factImage.alt = imageAlt;
       activity.innerHTML = '';
       if (spot.dataset.action === 'quiz') showActivity(spot.dataset.action);
       if (spot.dataset.action === 'game') {
