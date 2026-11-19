@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wat hoort waar? - De Romeinse soldaat</title>
+  <style>
+    :root { --ink: #1d2a35; --blue: #165997; --gold: #c49342; --green: #237344; }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; background: transparent; }
+    body { padding: 18px; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+    .game { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(230px, .85fr); gap: 22px; width: min(940px, 100%); min-height: min(660px, calc(100vh - 36px)); margin: 0 auto; padding: 28px; border: 5px solid white; border-radius: 14px; background: #fffaf0; box-shadow: 0 12px 35px rgba(0, 0, 0, .35); }
+    .close { position: absolute; top: 8px; right: 12px; z-index: 3; width: 36px; height: 36px; cursor: pointer; color: #53616b; font-size: 25px; border: 0; border-radius: 50%; background: #edf4f7; }
+    .close:hover, .close:focus-visible { background: #d9e8ee; outline: 2px solid var(--blue); }
+    .intro { grid-column: 1 / -1; padding-right: 36px; }
+    .eyebrow { margin: 0 0 5px; color: #79613a; font: 700 11px Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+    h1 { margin: 0 0 7px; font-size: clamp(25px, 4vw, 36px); }
+    .intro p:last-child { margin: 0; color: #52606a; font-size: 15px; line-height: 1.45; }
+    .soldier-panel { display: grid; grid-template-rows: 1fr auto; min-height: 0; padding: 10px; border-radius: 9px; background: #f0eee8; }
+    .soldier-stage { position: relative; width: min(100%, 360px); min-height: 370px; margin: auto; aspect-ratio: 4 / 5; }
+    .soldier { display: block; width: 100%; height: 100%; }
+    .drop-zone { position: absolute; display: grid; place-items: center; width: 19%; aspect-ratio: 1; padding: 3px; cursor: pointer; color: #35434b; font: 700 10px Arial, sans-serif; border: 2px dashed #7e8b8d; border-radius: 50%; background: rgba(255, 250, 240, .82); transition: .15s ease; }
+    .drop-zone:hover, .drop-zone:focus-visible, .drop-zone.is-target { border-color: var(--blue); background: #e1f1fb; outline: 2px solid rgba(22, 89, 151, .2); }
+    .drop-zone.is-correct { color: #145f37; border: 2px solid #50ad79; background: #e3f5e9; }
+    .drop-zone.is-wrong { border-color: #b84c3d; animation: nudge .22s ease-in-out 2; }
+    .drop-zone[data-slot="head"] { top: 7%; left: 40%; }
+    .drop-zone[data-slot="chest"] { top: 33%; left: 40%; }
+    .drop-zone[data-slot="shield"] { top: 41%; left: 9%; }
+    .drop-zone[data-slot="weapon"] { top: 40%; left: 72%; }
+    @keyframes nudge { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    .instruction { min-height: 42px; margin: 10px 0 0; color: #52606a; text-align: center; font: 13px/1.4 Arial, sans-serif; }
+    .inventory { align-self: center; padding: 15px; border: 1px solid #e1dbce; border-radius: 9px; background: #fffdf8; }
+    .inventory h2 { margin: 0 0 5px; font-size: 21px; }
+    .inventory > p { margin: 0 0 14px; color: #657079; font: 12px/1.4 Arial, sans-serif; }
+    .items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    .item { display: grid; place-items: center; min-height: 91px; padding: 8px 4px; cursor: grab; color: #35434b; font: 700 12px Arial, sans-serif; border: 1px solid #ccd3d3; border-radius: 7px; background: #f5f6f4; transition: .15s ease; touch-action: manipulation; }
+    .item:hover, .item:focus-visible, .item.is-selected { border-color: var(--blue); background: #e7f2f8; outline: 2px solid rgba(22, 89, 151, .16); }
+    .item:active { cursor: grabbing; }
+    .item[aria-disabled="true"] { cursor: default; opacity: .43; }
+    .item-icon { display: block; font-size: 31px; line-height: 1.1; }
+    .status { min-height: 43px; margin: 12px 0 0; color: #35434b; font: 700 13px/1.4 Arial, sans-serif; }
+    .status.is-success { color: var(--green); }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .action { padding: 9px 13px; cursor: pointer; color: white; font: 700 12px Arial, sans-serif; border: 0; border-radius: 5px; background: var(--blue); }
+    .action:hover, .action:focus-visible { background: #07487a; outline: 2px solid #9cc9e6; }
+    .action.secondary { color: #21435e; border: 1px solid #b9cedc; background: #edf7fc; }
+    .action.secondary:hover, .action.secondary:focus-visible { background: #d9effc; }
+    @media (max-width: 650px) {
+      body { padding: 12px; }
+      .game { grid-template-columns: 1fr; gap: 12px; min-height: calc(100vh - 24px); padding: 21px 14px 14px; }
+      .intro { grid-column: 1; }
+      .intro p:last-child { font-size: 13px; }
+      .soldier-stage { width: min(100%, 285px); min-height: 300px; }
+      .drop-zone { font-size: 9px; }
+      .inventory { padding: 12px; }
+      .inventory h2 { font-size: 18px; }
+      .inventory > p { margin-bottom: 9px; }
+      .items { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+      .item { min-height: 71px; font-size: 11px; }
+      .item-icon { font-size: 25px; }
+      .status { min-height: 34px; margin-top: 7px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="game" aria-labelledby="game-title">
+    <button class="close" id="close-game" type="button" aria-label="Spel sluiten">&times;</button>
+    <header class="intro">
+      <p class="eyebrow">Minigame · Romeinse soldaat</p>
+      <h1 id="game-title">Wat hoort waar?</h1>
+      <p>Een soldaat maakt zich klaar om het marskamp te bewaken. Sleep de uitrusting naar de juiste plek. Je kunt ook eerst een voorwerp aanklikken en daarna een plek kiezen.</p>
+    </header>
+    <section class="soldier-panel" aria-label="Romeinse soldaat aankleden">
+      <div class="soldier-stage">
+        <svg class="soldier" viewBox="0 0 240 300" role="img" aria-label="Tekening van een Romeinse soldaat zonder uitrusting">
+          <ellipse cx="120" cy="52" rx="25" ry="31" fill="#d9b293" stroke="#52606a" stroke-width="3"/>
+          <path d="M94 42 Q96 15 120 15 Q145 16 147 43 L139 37 Q122 29 101 39 Z" fill="#d8d8d2" stroke="#52606a" stroke-width="3"/>
+          <path d="M91 87 Q120 74 149 87 L163 155 Q144 171 120 169 Q96 171 77 155 Z" fill="#d9b293" stroke="#52606a" stroke-width="3"/>
+          <path d="M92 91 L75 103 L61 154 L73 159 L94 125 M148 91 L165 103 L179 154 L167 159 L146 125" fill="#d9b293" stroke="#52606a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M91 165 L112 168 L107 236 L100 282 L82 282 L87 230 Z M128 168 L149 165 L153 230 L160 282 L142 282 L132 236 Z" fill="#d9b293" stroke="#52606a" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M78 282 L103 282 L105 292 L74 292 Z M140 282 L163 282 L167 292 L136 292 Z" fill="#70543d" stroke="#52606a" stroke-width="2"/>
+          <path d="M89 96 Q120 105 151 96 L155 151 Q120 162 85 151 Z" fill="#f3eee1" fill-opacity=".72" stroke="#8f7650" stroke-width="2" stroke-dasharray="5 4"/>
+        </svg>
+        <button class="drop-zone" type="button" data-slot="head" aria-label="Plek voor de helm">Hoofd</button>
+        <button class="drop-zone" type="button" data-slot="chest" aria-label="Plek voor het harnas">Borst</button>
+        <button class="drop-zone" type="button" data-slot="shield" aria-label="Plek voor het schild">Arm</button>
+        <button class="drop-zone" type="button" data-slot="weapon" aria-label="Plek voor het wapen">Wapen</button>
+      </div>
+      <p class="instruction">Vul de vier plekken om de soldaat klaar te maken voor zijn wacht.</p>
+    </section>
+    <section class="inventory" aria-labelledby="inventory-title">
+      <h2 id="inventory-title">Uitrusting</h2>
+      <p>Kies een voorwerp en breng het naar de passende plek.</p>
+      <div class="items">
+        <button class="item" type="button" draggable="true" data-item="helmet" aria-label="Helm, sleep naar het hoofd">
+          <span class="item-icon" aria-hidden="true">⛑</span><span>Helm</span>
+        </button>
+        <button class="item" type="button" draggable="true" data-item="armor" aria-label="Harnas, sleep naar de borst">
+          <span class="item-icon" aria-hidden="true">🛡</span><span>Harnas</span>
+        </button>
+        <button class="item" type="button" draggable="true" data-item="shield" aria-label="Schild, sleep naar de arm">
+          <span class="item-icon" aria-hidden="true">🛡</span><span>Schild</span>
+        </button>
+        <button class="item" type="button" draggable="true" data-item="weapon" aria-label="Wapen, sleep naar de hand">
+          <span class="item-icon" aria-hidden="true">⚔</span><span>Wapen</span>
+        </button>
+      </div>
+      <p class="status" id="game-status" aria-live="polite">Begin met een voorwerp uit de uitrusting.</p>
+      <div class="actions">
+        <button class="action" id="reset-game" type="button">Opnieuw spelen</button>
+        <button class="action secondary" id="soldier-info" type="button">Over de soldaat</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    const correctSlots = { helmet: 'head', armor: 'chest', shield: 'shield', weapon: 'weapon' };
+    const itemNames = { helmet: 'Helm', armor: 'Harnas', shield: 'Schild', weapon: 'Wapen' };
+    const items = [...document.querySelectorAll('.item')];
+    const dropZones = [...document.querySelectorAll('.drop-zone')];
+    const status = document.querySelector('#game-status');
+    let selectedItem = null;
+    let placedCount = 0;
+
+    function selectItem(item) {
+      if (item.getAttribute('aria-disabled') === 'true') return;
+      selectedItem = item;
+      items.forEach((candidate) => candidate.classList.toggle('is-selected', candidate === item));
+      status.classList.remove('is-success');
+      status.textContent = `${itemNames[item.dataset.item]} gekozen. Kies de juiste plek bij de soldaat.`;
+      dropZones.forEach((zone) => zone.classList.add('is-target'));
+    }
+
+    function placeItem(zone) {
+      if (!selectedItem) {
+        status.textContent = 'Kies eerst een voorwerp uit de uitrusting.';
+        return;
+      }
+      const item = selectedItem;
+      const itemName = itemNames[item.dataset.item];
+      if (correctSlots[item.dataset.item] !== zone.dataset.slot) {
+        zone.classList.add('is-wrong');
+        status.textContent = 'Dat voorwerp hoort niet op deze plek. Probeer het nog eens.';
+        window.setTimeout(() => zone.classList.remove('is-wrong'), 500);
+        return;
+      }
+      if (zone.dataset.filled === 'true') {
+        status.textContent = 'Deze plek is al gevuld. Kies een andere plek.';
+        return;
+      }
+      zone.dataset.filled = 'true';
+      zone.textContent = itemName;
+      zone.classList.remove('is-target');
+      zone.classList.add('is-correct');
+      zone.setAttribute('aria-label', `${itemName} op de juiste plek`);
+      item.setAttribute('aria-disabled', 'true');
+      item.classList.remove('is-selected');
+      selectedItem = null;
+      placedCount += 1;
+      dropZones.forEach((candidate) => candidate.classList.remove('is-target'));
+      if (placedCount === Object.keys(correctSlots).length) {
+        status.classList.add('is-success');
+        status.textContent = 'Goed gedaan! De soldaat is klaar om de wacht bij het marskamp te houden.';
+      } else {
+        const remaining = Object.keys(correctSlots).length - placedCount;
+        status.textContent = remaining === 1
+          ? 'Goed zo! Nog 1 voorwerp te gaan.'
+          : `Goed zo! Nog ${remaining} voorwerpen te gaan.`;
+      }
+    }
+
+    items.forEach((item) => {
+      item.addEventListener('click', () => selectItem(item));
+      item.addEventListener('dragstart', (event) => {
+        if (item.getAttribute('aria-disabled') === 'true') {
+          event.preventDefault();
+          return;
+        }
+        selectedItem = item;
+        event.dataTransfer.setData('text/plain', item.dataset.item);
+        event.dataTransfer.effectAllowed = 'move';
+      });
+    });
+    dropZones.forEach((zone) => {
+      zone.addEventListener('click', () => placeItem(zone));
+      zone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      });
+      zone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const draggedItem = items.find((item) => item.dataset.item === event.dataTransfer.getData('text/plain'));
+        if (draggedItem) selectedItem = draggedItem;
+        placeItem(zone);
+      });
+    });
+    document.querySelector('#reset-game').addEventListener('click', () => {
+      placedCount = 0;
+      selectedItem = null;
+      items.forEach((item) => {
+        item.removeAttribute('aria-disabled');
+        item.classList.remove('is-selected');
+      });
+      dropZones.forEach((zone) => {
+        zone.textContent = zone.dataset.slot === 'head' ? 'Hoofd'
+          : zone.dataset.slot === 'chest' ? 'Borst'
+            : zone.dataset.slot === 'shield' ? 'Arm' : 'Wapen';
+        delete zone.dataset.filled;
+        zone.classList.remove('is-correct', 'is-wrong', 'is-target');
+        zone.setAttribute('aria-label', `Plek voor ${zone.dataset.slot === 'head' ? 'de helm'
+          : zone.dataset.slot === 'chest' ? 'het harnas'
+            : zone.dataset.slot === 'shield' ? 'het schild' : 'het wapen'}`);
+      });
+      status.classList.remove('is-success');
+      status.textContent = 'Begin met een voorwerp uit de uitrusting.';
+    });
+    document.querySelector('#soldier-info').addEventListener('click', () => {
+      status.textContent = 'De soldaat bewaakte het marskamp. Helm, harnas, schild en wapen beschermden hem tijdens zijn dienst.';
+    });
+    document.querySelector('#close-game').addEventListener('click', () => {
+      const targetOrigin = window.location.origin === 'null' ? '*' : window.location.origin;
+      window.parent.postMessage({ type: 'soldaatspel-sluiten' }, targetOrigin);
+    });
+  </script>
+</body>
+</html>

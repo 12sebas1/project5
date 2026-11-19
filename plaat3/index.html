@@ -93,6 +93,8 @@
     .fact-card.is-open { display: grid; }
     .fact-media { min-height: 220px; max-height: 34vh; background: #17232b; }
     .fact-media img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
+    .fact-media.is-soldier { min-height: 320px; max-height: 46vh; background: #fffaf0; }
+    .fact-media img.is-soldier { object-fit: contain; }
     .fact-content { position: relative; overflow: auto; padding: 28px 30px 24px; }
     .fact-card h2 { margin: 0 0 18px; font-size: clamp(28px, 3vw, 38px); line-height: 1.08; }
     .fact-card .fact-copy > p { margin: 0; color: #52606a; font-size: 19px; line-height: 1.6; }
@@ -112,6 +114,7 @@
     @media (max-width: 650px) {
       .fact-card { inset: 12px; width: auto; max-height: calc(100vh - 24px); border: 5px solid #fff; border-radius: 12px; }
       .fact-media { min-height: 180px; max-height: 28vh; }
+      .fact-media.is-soldier { min-height: 220px; max-height: 42vh; }
       .game-modal { padding: 12px; }
       .game-frame { height: calc(100vh - 24px); }
     }
@@ -130,12 +133,12 @@
       >
 
       <button class="hotspot" type="button" data-image-position="27.1,72.8" data-zoom="1.8" data-fact="spel" data-action="game" aria-label="Meer informatie en het molenspel"></button>
-      <button class="hotspot" type="button" data-image-position="84,37" data-zoom="2.1" data-fact="soldaat" data-action="quiz" aria-label="Meer informatie en quiz over de Romeinse soldaat"></button>
+      <button class="hotspot" type="button" data-image-position="84,37" data-zoom="2.1" data-fact="soldaat" data-action="quiz" aria-label="Meer informatie en spel over de Romeinse soldaat"></button>
       <button class="hotspot" type="button" data-image-position="58,38" data-zoom="13" data-fact="dieren" aria-label="Meer informatie over dieren"></button>
       <button class="hotspot" type="button" data-image-position="57,47" data-zoom="2.4" data-fact="handel" aria-label="Meer informatie over handel"></button>
       <button class="hotspot" type="button" data-image-position="73,55" data-zoom="2.1" data-fact="marskamp" aria-label="Meer informatie over het marskamp"></button>
-      <button class="hotspot" type="button" data-image-position="58,31" data-zoom="2.5" data-fact="dorp" aria-label="Meer informatie over het dorp"></button>
-      <button class="hotspot" type="button" data-image-position="54,68" data-zoom="1.8" data-fact="rivier" aria-label="Meer informatie over de rivier en de geul"></button>
+      <button class="hotspot" type="button" data-image-position="58,34" data-zoom="2.5" data-fact="dorp" aria-label="Meer informatie over het dorp"></button>
+      <button class="hotspot" type="button" data-image-position="54,68" data-zoom="1.8" data-fact="rivier" data-action="quiz1" aria-label="Meer informatie over de rivier en de geul"></button>
       <button class="hotspot" type="button" data-image-position="34,66" data-zoom="2.5" data-fact="kinderen" data-activity="game" aria-label="Meer informatie en een mini-game over de kinderen"></button>
 
     </div>
@@ -191,6 +194,7 @@
     const card = document.querySelector('#fact-card');
     const heading = card.querySelector('h2');
     const text = card.querySelector('p');
+    const factMedia = card.querySelector('.fact-media');
     const factImage = card.querySelector('.fact-media img');
     const activity = document.querySelector('#activity');
     const scene = document.querySelector('.scene');
@@ -217,16 +221,23 @@
     const quiz = {
       title: 'Korte quiz',
       question: 'Waar staat deze soldaat bij?',
-      choices: ['Bij de palissade van het marskamp', 'Bij een moderne snelweg', 'Bij een middeleeuws kasteel'],
+      choices: ['Bij het marskamp', 'Bij een markt', 'Bij een middeleeuws kasteel'],
       answer: 0,
       success: 'Goed gedaan! De soldaat bewaakt de palissade van het marskamp.'
     };
     const game = {
       title: 'Mini-game: het dagelijks leven',
       question: 'Wat zie je op de voorgrond van de plaat?',
-      choices: ['Mensen die een spel spelen', 'Een moderne auto', 'Een vliegtuig'],
+      choices: ['Mensen die een spel spelen', 'Een boer', 'Een soldaat'],
       answer: 0,
       success: 'Precies! Op de voorgrond spelen mensen samen het molenspel.'
+    };
+    const quiz1 = {
+      title: 'Korte quiz',
+      question: 'Waarom groeven Romeinse soldaten een geul rond hun marskamp?',
+      choices: ['Om water op te vangen', 'Om het kamp te verdedigen', 'Om planten te laten groeien'],
+      answer: 1,
+      success: 'Precies! De geul maakte het moeilijker om het marskamp binnen te komen.'
     };
 
     function positionHotspots() {
@@ -335,7 +346,7 @@
     }
 
     function showActivity(type) {
-      const content = type === 'quiz' ? quiz : game;
+      const content = type === 'quiz' ? quiz : type === 'quiz1' ? quiz1 : game;
       activity.innerHTML = `<h3>${content.title}</h3><p>${content.question}</p><div class="choices"></div><p class="activity-result" aria-live="polite"></p>`;
       const choices = activity.querySelector('.choices');
       const result = activity.querySelector('.activity-result');
@@ -345,17 +356,26 @@
         button.type = 'button';
         button.textContent = choice;
         button.addEventListener('click', () => {
-          choices.querySelectorAll('.choice').forEach((item) => item.disabled = true);
           if (index === content.answer) {
+            choices.querySelectorAll('.choice').forEach((item) => item.disabled = true);
             button.classList.add('is-correct');
             result.textContent = content.success;
           } else {
+            button.disabled = true;
             button.classList.add('is-wrong');
             result.textContent = 'Nog niet. Kijk goed naar de plaat en probeer het opnieuw.';
           }
         });
         choices.append(button);
       });
+      if (type === 'quiz') {
+        const gameButton = document.createElement('button');
+        gameButton.className = 'choice';
+        gameButton.type = 'button';
+        gameButton.textContent = 'Speel: kleed de Romeinse soldaat aan';
+        gameButton.addEventListener('click', openSoldierGame);
+        activity.append(gameButton);
+      }
     }
 
     function applyZoom(newScale, focusX, focusY, sourceX = focusX, sourceY = focusY) {
@@ -411,11 +431,21 @@
       gameModal.setAttribute('aria-hidden', 'false');
     }
 
+    function openSoldierGame() {
+      card.classList.remove('is-open');
+      gameFrame.src = 'soldaatspel.html';
+      gameFrame.title = 'Wat hoort waar? - De Romeinse soldaat';
+      gameModal.classList.add('is-open');
+      gameModal.setAttribute('aria-hidden', 'false');
+    }
+
     function closeMillGame() {
       gameModal.classList.remove('is-open');
       gameModal.setAttribute('aria-hidden', 'true');
       showAllHotspots();
       resetZoom();
+      gameFrame.src = 'molenspel.html';
+      gameFrame.title = 'Het Molenspel';
     }
 
     function openHotspotPopup(spot) {
@@ -425,8 +455,10 @@
       text.textContent = fact[1];
       factImage.src = imageSource;
       factImage.alt = imageAlt;
+      factMedia.classList.toggle('is-soldier', spot.dataset.fact === 'soldaat');
+      factImage.classList.toggle('is-soldier', spot.dataset.fact === 'soldaat');
       activity.innerHTML = '';
-      if (spot.dataset.action === 'quiz') showActivity(spot.dataset.action);
+      if (spot.dataset.action === 'quiz' || spot.dataset.action === 'quiz1') showActivity(spot.dataset.action);
       if (spot.dataset.activity) showActivity(spot.dataset.activity);
       if (spot.dataset.action === 'game') {
         openMillGame();
@@ -478,7 +510,10 @@
       if (event.target === gameModal) closeMillGame();
     });
     window.addEventListener('message', (event) => {
-      if (event.source === gameFrame.contentWindow && event.data?.type === 'molenspel-sluiten') closeMillGame();
+      if (
+        event.source === gameFrame.contentWindow
+        && ['molenspel-sluiten', 'soldaatspel-sluiten'].includes(event.data?.type)
+      ) closeMillGame();
     });
     imageLayer.addEventListener('wheel', (event) => {
       event.preventDefault();
